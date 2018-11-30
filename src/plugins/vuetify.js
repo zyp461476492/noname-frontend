@@ -8,7 +8,7 @@ import zhHans from "vuetify/es5/locale/zh-Hans";
 // 注入axios
 Vue.prototype.$vuetify = Vuetify;
 Vue.use(Vuetify, {
-  iconfont: "md",
+  iconfont: "mdi",
   lang: {
     locales: {
       "zh-Hans": zhHans
