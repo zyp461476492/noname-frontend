@@ -1,6 +1,6 @@
 <template>
   <v-app>
-     <v-navigation-drawer v-model="drawer" absolute temporary>
+    <v-navigation-drawer v-model="drawer" absolute temporary>
       <v-list class="pa-1">
         <v-list-tile avatar>
           <v-list-tile-avatar>
@@ -38,22 +38,17 @@
       </v-btn>
     </v-toolbar>
 
-    <v-content>
-      
-    </v-content>
-
-   
+    <v-content></v-content>
   </v-app>
 </template>
 
 <script>
-
-
 export default {
   name: "App",
   methods: {
     drawerClick: function() {
       this.drawer = !this.drawer;
+      this.test = test;
     }
   },
   data() {
