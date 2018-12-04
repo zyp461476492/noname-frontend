@@ -39,7 +39,7 @@
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="primary">Login</v-btn>
+            <v-btn color="primary" @click="goTo">Login</v-btn>
           </v-card-actions>
         </v-card>
       </v-flex>
@@ -51,7 +51,7 @@
 export default {
   methods: {
     goTo: function() {
-      this.router.push("home");
+      this.$router.push("/main");
     }
   },
   data: () => ({

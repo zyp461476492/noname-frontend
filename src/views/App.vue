@@ -48,7 +48,6 @@ export default {
   methods: {
     drawerClick: function() {
       this.drawer = !this.drawer;
-      this.test = test;
     }
   },
   data() {
