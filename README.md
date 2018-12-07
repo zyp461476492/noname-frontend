@@ -27,3 +27,8 @@ npm run lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+### check default webpack config
+```
+vue inspect > output.js
+```
