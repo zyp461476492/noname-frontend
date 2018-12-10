@@ -38,29 +38,16 @@
     <v-toolbar app color="primary">
       <v-toolbar-side-icon @click="drawerClick"></v-toolbar-side-icon>
       <v-toolbar-title class="headline text-uppercase">
-        <span>Vuetify</span>
+        <span>商户管理系统</span>
       </v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn flat href="https://github.com/vuetifyjs/vuetify/releases/latest" target="_blank">
-        <span class="mr-2">Latest Release</span>
-        <router-link to="/main/userConfig">userConfig</router-link>
+      <v-btn  flat href="#">
+        <router-link color="black" class="mr-2" to="/main/userConfig">userConfig</router-link>
       </v-btn>
     </v-toolbar>
 
     <v-content app>
       <router-view></router-view>
-      <!-- <v-layout column warp>
-        <v-flex xs12 ma-2>
-          <div>
-            <v-breadcrumbs :items="itemsDemo">
-              <v-icon slot="divider">chevron_right</v-icon>
-            </v-breadcrumbs>
-          </div>
-        </v-flex>
-        <v-flex xs12 ma-2> 
-          
-        </v-flex>
-      </v-layout>-->
     </v-content>
   </v-app>
 </template>
