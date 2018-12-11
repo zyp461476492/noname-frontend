@@ -15,6 +15,7 @@
                   :rules="loginIdRules"
                   :counter="16"
                   label="登录名"
+                  :readonly="updateFlag ? 'readonly' : false"
                   required
                 ></v-text-field>
               </v-flex>
@@ -79,8 +80,8 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="blue darken-1" flat @click="closeDialog">Close</v-btn>
-        <v-btn color="blue darken-1" flat @click="submit">Save</v-btn>
+        <v-btn color="blue darken-1" flat @click="closeDialog">关闭</v-btn>
+        <v-btn color="blue darken-1" flat @click="submit">保存</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -101,13 +102,19 @@ export default {
     dialog: {
       type: Boolean,
       default: false
+    },
+    dialogTitle: {
+      type: String
+    },
+    id: {
+      type: Number,
+      default: -1
     }
   },
   data() {
     return {
-      dialogTitle: "用户管理",
       dialogFlag: false,
-      valid: true,
+      valid: false,
       loginIdRules: [
         v => !!v || "账号不能为空",
         v => this.checkLoginId(v) || "账号名已经存在",
@@ -141,57 +148,135 @@ export default {
       ],
       genderItems: [{ text: "男", value: "0" }, { text: "女", value: "1" }],
       formData: {
-        loginId: "",
-        name: "",
-        orgId: "",
-        phone: "",
-        email: "",
-        identifyCard: "",
+        loginId: "zyp",
+        name: "张湾",
+        orgId: "1",
+        phone: "13150337230",
+        email: "1@1",
+        identifyCard: "111111111111111",
+        gender: "0",
         order: 0,
         status: 0,
         lastLoginIp: "127.0.0.1"
       }
     };
   },
+  computed: {
+    updateFlag() {
+      if (this.id != -1) {
+        // 查询用户信息
+        this.queryUserInfo();
+        return true;
+      }
+      return false;
+    }
+  },
   methods: {
-    ajaxAddUser() {
-      let url = "/api/sys/user/add/";
-      this.$axios({
-        method: "post",
-        url: url,
-        data: this.formData
-      })
+    notifyParent() {
+      // 通知父组件刷新用户列表
+      this.$emit("refresh");
+    },
+    queryUserInfo() {
+      let url = "/api/sys/user/query/" + this.id;
+      this.getDataFromApi(url, "get")
         .then(response => {
-          console.log(response.data);
+          console.log(this);
           let resCode = response.data.code;
           if (resCode === 0) {
             // 成功
+            let userInfo = response.data.data;
+            this.formData.loginId = userInfo.loginId;
+            this.formData.name = userInfo.name;
+            this.formData.orgId = userInfo.orgId;
+            this.formData.phone = userInfo.phone;
+            this.formData.email = userInfo.email;
+            this.formData.identifyCard = userInfo.identifyCard;
+            this.formData.gender = userInfo.gender;
+            this.formData.order = userInfo.order;
+            this.formData.status = userInfo.status;
+            this.formData.createDate = userInfo.createDate;
+          } else {
+            // 失败
+            console.log("添加失败");
+          }
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    },
+    getDataFromApi(url, method, data) {
+      return this.$axios({
+        method: method,
+        url: url,
+        data: data
+      });
+    },
+    ajaxUpdateUser() {
+      let url = "/api/sys/user/update/";
+      this.formData.id = this.id;
+      var reqObj = {
+        data: this.formData,
+        updateBy: 0
+      };
+      this.getDataFromApi(url, "post", reqObj)
+        .then(response => {
+          console.log(this);
+          let resCode = response.data.code;
+          if (resCode === 0) {
+            // 成功
+            this.notifyParent();
             this.dialogFlag = false;
             this.$refs.form.reset();
           } else {
             // 失败
-            console.log('添加失败');
+            console.log("更新失败");
           }
         })
         .catch(error => {
-            console.log(error);
+          console.log(error);
+        });
+    },
+    ajaxAddUser() {
+      let url = "/api/sys/user/add/";
+      this.getDataFromApi(url, "post", this.formData)
+        .then(response => {
+          console.log(this);
+          let resCode = response.data.code;
+          if (resCode === 0) {
+            // 成功
+            this.notifyParent();
+            this.dialogFlag = false;
+            this.$refs.form.reset();
+          } else {
+            // 失败
+            console.log("添加失败");
+          }
+        })
+        .catch(error => {
+          console.log(error);
         });
     },
     submit() {
       if (this.$refs.form.validate()) {
         // Native form submission is not yet supported
-        this.ajaxAddUser();
+        if (this.updateFlag) {
+          this.ajaxUpdateUser();
+        } else {
+          this.ajaxAddUser();
+        }
       }
       // this.$refs.form.reset();
     },
     checkLoginId(name) {
       // 后台检查用户名
-      console.log(name);
-      return true;
+      if (this.updateFlag) {
+        // 更新时不检测重名
+        return true;
+      }
+      return name !== "@@@";
     },
     closeDialog() {
       this.dialogFlag = false;
-      this.$refs.form.reset();
     }
   }
 };

@@ -10,11 +10,11 @@
             <v-toolbar-title>用户管理</v-toolbar-title>
             <v-spacer></v-spacer>
             <v-toolbar-items>
-              <user-dialog :dialog="dialog"/>
-              <v-btn @click="dialog = !dialog" color="success" flat>
+              <user-dialog :dialog="dialog" :dialogTitle="dialogTitle" :id="dialogId" v-on:refresh="needRefresh"/>
+              <v-btn @click="addUser" color="success" flat>
                 <v-icon>mdi-account-plus</v-icon>
               </v-btn>
-              <v-btn color="info" flat>
+              <v-btn @click="updateUser" color="info" flat>
                 <v-icon>mdi-account-edit</v-icon>
               </v-btn>
               <v-btn color="error" flat>
@@ -26,14 +26,19 @@
         <v-flex xs12 mt-1>
           <v-card>
             <v-data-table
+              v-model="selected"
               :headers="headers"
               :items="userInfo"
               :pagination.sync="pagination"
               :total-items="totalCount"
               :loading="loading"
               :rows-per-page-items="[5,10,25]"
+              select-all
             >
               <template slot="items" slot-scope="props">
+                <td>
+                  <v-checkbox v-model="props.selected" primary hide-details></v-checkbox>
+                </td>
                 <td>{{props.index + 1 + ((pagination.page - 1 ) * pagination.rowsPerPage)}}</td>
                 <td>{{ props.item.loginId}}</td>
                 <td>{{ props.item.name}}</td>
@@ -79,8 +84,10 @@ export default {
   },
   data() {
     return {
+      selected: [],
       dialogTitle: "用户管理",
       dialog: false,
+      dialogId: -1,
       totalCount: 0,
       pagination: {},
       loading: false,
@@ -115,15 +122,27 @@ export default {
     };
   },
   methods: {
+    needRefresh() {
+      this.getDataFromApi();
+    },
     openUserDialog(title) {
       this.dialogTitle = title;
-      this.dialog = true;
+      this.dialog = !this.dialog;
     },
     addUser() {
+      this.dialogId = -1;
       this.openUserDialog("用户新增");
     },
     updateUser() {
-      this.openUserDialog("用户更新");
+      let l = this.selected.length;
+      if (l != 1) {
+        alert("请选择一个待修改的用户数据");
+      } else if (l == 1) {
+        // 获取选中数据ID
+        let id = this.selected[0].id;
+        this.dialogId = id;
+        this.openUserDialog("用户更新");
+      }
     },
     checkUser() {
       this.openUserDialog("用户信息");
