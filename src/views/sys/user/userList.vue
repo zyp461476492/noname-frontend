@@ -10,7 +10,7 @@
             <v-toolbar-title>用户管理</v-toolbar-title>
             <v-spacer></v-spacer>
             <v-toolbar-items>
-              <user-dialog :dialog="dialog" />
+              <user-dialog :dialog="dialog"/>
               <v-btn @click="dialog = !dialog" color="success" flat>
                 <v-icon>mdi-account-plus</v-icon>
               </v-btn>
@@ -34,9 +34,11 @@
               :rows-per-page-items="[5,10,25]"
             >
               <template slot="items" slot-scope="props">
-                <td>{{props.index + 1}}</td>
+                <td>{{props.index + 1 + ((pagination.page - 1 ) * pagination.rowsPerPage)}}</td>
+                <td>{{ props.item.loginId}}</td>
                 <td>{{ props.item.name}}</td>
                 <td>{{ props.item.orgId}}</td>
+                <td>{{ props.item.gender}}</td>
                 <td>{{ props.item.email}}</td>
                 <td>{{ props.item.phone}}</td>
                 <td>{{ props.item.createDate | formateDate}}</td>
@@ -84,8 +86,10 @@ export default {
       loading: false,
       headers: [
         { text: "编号", value: "id", sortable: false },
+        { text: "登录名", value: "loginId", sortable: false },
         { text: "姓名", value: "name", sortable: false },
         { text: "部门", value: "dept", sortable: false },
+        { text: "性别", value: "gender", sortable: false },
         { text: "邮箱", value: "email", sortable: false },
         { text: "联系电话", value: "phone", sortable: false },
         { text: "注册时间", value: "createDate", sortable: false },
