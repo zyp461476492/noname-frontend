@@ -24,6 +24,7 @@
                   v-model="formData.name"
                   :rules="nameRules"
                   :counter="20"
+                  :readonly="readFlag ? 'readonly' : false"
                   label="用户姓名"
                   required
                 ></v-text-field>
@@ -33,6 +34,7 @@
                   v-model="formData.orgId"
                   :rules="deptRules"
                   :counter="20"
+                  :readonly="readFlag ? 'readonly' : false"
                   label="所属公司"
                   required
                 ></v-text-field>
@@ -42,6 +44,7 @@
                   v-model="formData.gender"
                   :rules="genderRules"
                   :items="genderItems"
+                  :disabled="readFlag ? true : false"
                   label="性别"
                 ></v-select>
               </v-flex>
@@ -50,6 +53,7 @@
                   v-model="formData.email"
                   :rules="emailRules"
                   :counter="20"
+                  :readonly="readFlag ? 'readonly' : false"
                   label="邮箱"
                   required
                 ></v-text-field>
@@ -59,6 +63,7 @@
                   v-model="formData.phone"
                   :rules="phoneRules"
                   :counter="11"
+                  :readonly="readFlag ? 'readonly' : false"
                   label="电话"
                   required
                 ></v-text-field>
@@ -68,11 +73,19 @@
                   v-model="formData.identifyCard"
                   :rules="identifyCardRules"
                   :counter="18"
+                  :readonly="readFlag ? 'readonly' : false"
                   label="身份证号"
                 ></v-text-field>
               </v-flex>
               <v-flex xs6>
-                <v-text-field type="text" v-model="formData.order" :counter="2" label="排序" required></v-text-field>
+                <v-text-field
+                  type="text"
+                  v-model="formData.order"
+                  :counter="2"
+                  :readonly="readFlag ? 'readonly' : false"
+                  label="排序"
+                  required
+                ></v-text-field>
               </v-flex>
             </v-layout>
           </v-container>
@@ -81,14 +94,15 @@
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn color="blue darken-1" flat @click="closeDialog">关闭</v-btn>
-        <v-btn color="blue darken-1" flat @click="submit">保存</v-btn>
+        <v-btn color="blue darken-1" flat @click="submit" v-show="!readFlag">保存</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
 </template>
 <script>
 export default {
-  mounted() {},
+  mounted() {
+  },
   watch: {
     dialog() {
       // 监听弹窗发生变化时，因为有组件复用的情况，清除表单中的值
@@ -96,6 +110,15 @@ export default {
       // 默认设置排序值为0
       this.formData.order = 0;
       this.dialogFlag = true;
+    },
+    id() {
+      if (this.id != -1) {
+        // 查询用户信息
+        this.queryUserInfo();
+      } else {
+        // 设置默认信息
+        this.initFormData();
+      }
     }
   },
   props: {
@@ -109,6 +132,11 @@ export default {
     id: {
       type: Number,
       default: -1
+    },
+    readFlag: {
+      type: Boolean,
+      default: false,
+      required: false
     }
   },
   data() {
@@ -161,19 +189,35 @@ export default {
   computed: {
     updateFlag() {
       if (this.id != -1) {
-        // 查询用户信息
-        this.queryUserInfo();
         return true;
       }
       return false;
     }
   },
   methods: {
+    initFormData() {
+      this.formData = {
+        loginId: "",
+        name: "",
+        orgId: "",
+        phone: "13150337230",
+        email: "1@qq.com",
+        identifyCard: "111111111111111111",
+        gender: "0",
+        order: 0,
+        status: 0,
+        lastLoginIp: "127.0.0.1"
+      };
+    },
     buildTipInfo(msg, type) {
       return {
         msg: msg,
         type: type
       };
+    },
+    notifyParentClose() {
+      // 通知父组件窗口关闭
+      this.$emit("dialog-close");
     },
     notifyParent() {
       // 通知父组件刷新用户列表
@@ -263,7 +307,7 @@ export default {
               this.buildTipInfo("添加用户信息成功", "success")
             );
             this.dialogFlag = false;
-            this.$refs.form.reset();
+            this.initFormData();
           } else {
             // 失败
             this.notifyParentTips(
@@ -298,6 +342,7 @@ export default {
     },
     closeDialog() {
       this.dialogFlag = false;
+      this.notifyParentClose();
     }
   }
 };

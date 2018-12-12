@@ -20,16 +20,21 @@
                 :dialog="dialog"
                 :dialogTitle="dialogTitle"
                 :id="dialogId"
+                :readFlag="dialogReadonly"
                 v-on:refresh="needRefresh"
                 v-on:msg-tip="childTips"
+                v-on:dialog-close="cancelSelected"
               />
+              <v-btn @click="showUser" color="primary" flat>
+                <v-icon>mdi-account-search</v-icon>
+              </v-btn>
               <v-btn @click="addUser" color="success" flat>
                 <v-icon>mdi-account-plus</v-icon>
               </v-btn>
               <v-btn @click="updateUser" color="info" flat>
                 <v-icon>mdi-account-edit</v-icon>
               </v-btn>
-              <v-btn @click="deleteUser" color="error" flat>
+              <v-btn @click="deleteUserConfirm" color="error" flat>
                 <v-icon>mdi-account-remove</v-icon>
               </v-btn>
             </v-toolbar-items>
@@ -103,6 +108,7 @@ export default {
       alertMsg: "",
       selected: [],
       dialogTitle: "用户管理",
+      dialogReadonly: false,
       dialog: false,
       dialogId: -1,
       totalCount: 0,
@@ -138,6 +144,11 @@ export default {
     };
   },
   methods: {
+    cancelSelected() {
+      // 取消选择的内容
+      this.selected = [];
+    },
+
     childTips(tipInfo) {
       this.snackbar = !this.snackbar;
       this.alertMsg = tipInfo.msg;
@@ -149,20 +160,35 @@ export default {
       this.snackbarColor = type;
     },
     needRefresh() {
-      this.getDataFromApi();
+      this.initPagination();
     },
     openUserDialog(title) {
       this.dialogTitle = title;
       this.dialog = !this.dialog;
     },
+    showUser() {
+      let l = this.selected.length;
+      if (l != 1) {
+        this.tips("请选择一个待查看的用户", "warning");
+      } else if (l == 1) {
+        // 获取选中数据ID
+        let id = this.selected[0].id;
+        this.dialogId = id;
+        // 设置弹窗状态为只读
+        this.dialogReadonly = true;
+        this.openUserDialog("用户信息");
+      }
+    },
     addUser() {
       this.dialogId = -1;
+      this.dialogReadonly = false;
       this.openUserDialog("用户新增");
     },
     updateUser() {
+      this.dialogReadonly = false;
       let l = this.selected.length;
       if (l != 1) {
-        this.tips("请选择一个待修改的用户数据", "warning");
+        this.tips("请选择一个待修改的用户", "warning");
       } else if (l == 1) {
         // 获取选中数据ID
         let id = this.selected[0].id;
@@ -170,31 +196,54 @@ export default {
         this.openUserDialog("用户更新");
       }
     },
-    deleteUser() {
+    deleteUserConfirm() {
       let l = this.selected.length;
       if (l == 0) {
-        this.tips("请选择待删除的用户数据", "warning");
+        this.tips("请选择待删除的用户", "warning");
       } else {
-        this.$axios
-          .post("/api/sys/user/del/batch/", this.selected)
-          .then(response => {
-            this.selected = [];
-            let code = response.data.code;
-            if (code === 0) {
-              this.getDataFromApi();
-              this.tips("删除成功", "success");
-            } else {
-              this.tips("删除失败", "error");
-            }
+        this.$msgbox
+          .confirm("此操作将永久删除该用户, 是否继续?", "提示", {
+            confirmButtonText: "确定",
+            cancelButtonText: "取消",
+            type: "warning"
           })
-          .catch(error => {
-            this.selected = [];
-            this.tips("删除失败，网络异常" + error, "error");
+          .then(() => {
+            this.deleteUser();
+            this.cancelSelected();
+            this.$msgbox({
+              type: "success",
+              message: "删除成功!"
+            });
+          })
+          .catch(() => {
+            // 清除已经选择的内容
+            this.cancelSelected();
           });
       }
     },
+    deleteUser() {
+      this.$axios
+        .post("/api/sys/user/del/batch/", this.selected)
+        .then(response => {
+          this.selected = [];
+          let code = response.data.code;
+          if (code === 0) {
+            this.initPagination();
+            this.tips("删除成功", "success");
+          } else {
+            this.tips("删除失败", "error");
+          }
+        })
+        .catch(error => {
+          this.selected = [];
+          this.tips("删除失败，网络异常" + error, "error");
+        });
+    },
     checkUser() {
       this.openUserDialog("用户信息");
+    },
+    initPagination() {
+      this.pagination.page = 1;
     },
     getDataFromApi() {
       this.loading = true;

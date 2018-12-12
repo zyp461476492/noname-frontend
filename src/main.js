@@ -6,6 +6,7 @@ import "./plugins/filter";
 import "./plugins/element";
 import RouterVue from './views/router.vue';
 
+// 注入axios
 Vue.prototype.$axios = axios;
 Vue.config.productionTip = false
 
