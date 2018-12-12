@@ -125,9 +125,7 @@ export default {
         v => (v && v.length <= 20) || "姓名长度应小于20字符"
       ],
       genderRules: [v => !!v || "请选择性别"],
-      deptRules: [
-        v => !!v || "请输入所属公司"
-      ],
+      deptRules: [v => !!v || "请输入所属公司"],
       emailRules: [
         v => !!v || "请输入邮箱",
         v => /.+@.+/.test(v) || "非法邮件格式"
@@ -171,15 +169,23 @@ export default {
     }
   },
   methods: {
+    buildTipInfo(msg, type) {
+      return {
+        msg: msg,
+        type: type
+      };
+    },
     notifyParent() {
       // 通知父组件刷新用户列表
       this.$emit("refresh");
+    },
+    notifyParentTips(tipInfo) {
+      this.$emit("msg-tip", tipInfo);
     },
     queryUserInfo() {
       let url = "/api/sys/user/query/" + this.id;
       this.getDataFromApi(url, "get")
         .then(response => {
-          console.log(this);
           let resCode = response.data.code;
           if (resCode === 0) {
             // 成功
@@ -196,11 +202,15 @@ export default {
             this.formData.createDate = userInfo.createDate;
           } else {
             // 失败
-            console.log("添加失败");
+            this.notifyParentTips(
+              this.buildTipInfo("查询用户信息失败", "warning")
+            );
           }
         })
         .catch(error => {
-          console.log(error);
+          this.notifyParentTips(
+            this.buildTipInfo("查询用户信息-网络请求失败:" + error, "error")
+          );
         });
     },
     getDataFromApi(url, method, data) {
@@ -219,40 +229,52 @@ export default {
       };
       this.getDataFromApi(url, "post", reqObj)
         .then(response => {
-          console.log(this);
           let resCode = response.data.code;
           if (resCode === 0) {
             // 成功
             this.notifyParent();
+            this.notifyParentTips(
+              this.buildTipInfo("更新用户信息成功", "success")
+            );
             this.dialogFlag = false;
             this.$refs.form.reset();
           } else {
             // 失败
-            console.log("更新失败");
+            this.notifyParentTips(
+              this.buildTipInfo("更新用户信息失败", "warning")
+            );
           }
         })
         .catch(error => {
-          console.log(error);
+          this.notifyParentTips(
+            this.buildTipInfo("更新用户信息-网络请求失败:" + error, "error")
+          );
         });
     },
     ajaxAddUser() {
       let url = "/api/sys/user/add/";
       this.getDataFromApi(url, "post", this.formData)
         .then(response => {
-          console.log(this);
           let resCode = response.data.code;
           if (resCode === 0) {
             // 成功
             this.notifyParent();
+            this.notifyParentTips(
+              this.buildTipInfo("添加用户信息成功", "success")
+            );
             this.dialogFlag = false;
             this.$refs.form.reset();
           } else {
             // 失败
-            console.log("添加失败");
+            this.notifyParentTips(
+              this.buildTipInfo("添加用户信息失败", "warning")
+            );
           }
         })
         .catch(error => {
-          console.log(error);
+          this.notifyParentTips(
+            this.buildTipInfo("添加用户信息-网络请求失败:" + error, "error")
+          );
         });
     },
     submit() {

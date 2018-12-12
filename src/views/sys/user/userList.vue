@@ -5,6 +5,12 @@
     </v-flex>
     <v-flex xs12 ml-2 mr-2>
       <v-layout column>
+        <customSnackBar
+          :color="snackbarColor"
+          :text="alertMsg"
+          :snackbar="snackbar"
+          :timeout="snackbarTimeout"
+        />
         <v-flex xs12>
           <v-toolbar>
             <v-toolbar-title>用户管理</v-toolbar-title>
@@ -15,6 +21,7 @@
                 :dialogTitle="dialogTitle"
                 :id="dialogId"
                 v-on:refresh="needRefresh"
+                v-on:msg-tip="childTips"
               />
               <v-btn @click="addUser" color="success" flat>
                 <v-icon>mdi-account-plus</v-icon>
@@ -49,7 +56,6 @@
                 <td>{{ props.item.name}}</td>
                 <td>{{ props.item.orgId}}</td>
                 <td>{{ props.item.gender}}</td>
-                <td>{{ props.item.email}}</td>
                 <td>{{ props.item.phone}}</td>
                 <td>{{ props.item.createDate | formateDate}}</td>
                 <td>{{ props.item.updateDate | formateDate}}</td>
@@ -70,11 +76,13 @@
 // @ 是vue自动生成时设置 /src目录的别名
 import breadcrumbs from "@/components/breadcrumbs/breadcrumbs.vue";
 import userDialog from "@/components/userDialog/userDialog.vue";
+import customSnackBar from "@/components/snackBar/customSnackBar.vue";
 
 export default {
   components: {
     breadcrumbs: breadcrumbs,
-    userDialog: userDialog
+    userDialog: userDialog,
+    customSnackBar: customSnackBar
   },
   watch: {
     pagination: {
@@ -89,6 +97,10 @@ export default {
   },
   data() {
     return {
+      snackbar: false,
+      snackbarColor: "info",
+      snackbarTimeout: 1500,
+      alertMsg: "",
       selected: [],
       dialogTitle: "用户管理",
       dialog: false,
@@ -102,7 +114,6 @@ export default {
         { text: "姓名", value: "name", sortable: false },
         { text: "部门", value: "dept", sortable: false },
         { text: "性别", value: "gender", sortable: false },
-        { text: "邮箱", value: "email", sortable: false },
         { text: "联系电话", value: "phone", sortable: false },
         { text: "注册时间", value: "createDate", sortable: false },
         { text: "更新时间", value: "updateDate", sortable: false },
@@ -127,6 +138,16 @@ export default {
     };
   },
   methods: {
+    childTips(tipInfo) {
+      this.snackbar = !this.snackbar;
+      this.alertMsg = tipInfo.msg;
+      this.snackbarColor = tipInfo.type;
+    },
+    tips(text, type) {
+      this.snackbar = !this.snackbar;
+      this.alertMsg = text;
+      this.snackbarColor = type;
+    },
     needRefresh() {
       this.getDataFromApi();
     },
@@ -141,7 +162,7 @@ export default {
     updateUser() {
       let l = this.selected.length;
       if (l != 1) {
-        alert("请选择一个待修改的用户数据");
+        this.tips("请选择一个待修改的用户数据", "warning");
       } else if (l == 1) {
         // 获取选中数据ID
         let id = this.selected[0].id;
@@ -152,7 +173,7 @@ export default {
     deleteUser() {
       let l = this.selected.length;
       if (l == 0) {
-        alert("请选择待删除的用户数据");
+        this.tips("请选择待删除的用户数据", "warning");
       } else {
         this.$axios
           .post("/api/sys/user/del/batch/", this.selected)
@@ -161,14 +182,14 @@ export default {
             let code = response.data.code;
             if (code === 0) {
               this.getDataFromApi();
-              alert("删除成功");
+              this.tips("删除成功", "success");
             } else {
-              alert("删除失败");
+              this.tips("删除失败", "error");
             }
           })
           .catch(error => {
             this.selected = [];
-            console.log(error);
+            this.tips("删除失败，网络异常" + error, "error");
           });
       }
     },
@@ -200,7 +221,7 @@ export default {
         })
         .catch(error => {
           this.loading = false;
-          console.log(error);
+          this.tips("查询请求失败, error:" + error, "error");
         });
     }
   }
