@@ -126,8 +126,7 @@ export default {
       ],
       genderRules: [v => !!v || "请选择性别"],
       deptRules: [
-        v => !!v || "请输入所属公司",
-        v => (v && v.length <= 20) || "公司长度应小于20字符"
+        v => !!v || "请输入所属公司"
       ],
       emailRules: [
         v => !!v || "请输入邮箱",
@@ -148,12 +147,12 @@ export default {
       ],
       genderItems: [{ text: "男", value: "0" }, { text: "女", value: "1" }],
       formData: {
-        loginId: "zyp",
-        name: "张湾",
-        orgId: "1",
+        loginId: "",
+        name: "",
+        orgId: "",
         phone: "13150337230",
-        email: "1@1",
-        identifyCard: "111111111111111",
+        email: "1@qq.com",
+        identifyCard: "111111111111111111",
         gender: "0",
         order: 0,
         status: 0,

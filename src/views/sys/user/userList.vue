@@ -10,14 +10,19 @@
             <v-toolbar-title>用户管理</v-toolbar-title>
             <v-spacer></v-spacer>
             <v-toolbar-items>
-              <user-dialog :dialog="dialog" :dialogTitle="dialogTitle" :id="dialogId" v-on:refresh="needRefresh"/>
+              <user-dialog
+                :dialog="dialog"
+                :dialogTitle="dialogTitle"
+                :id="dialogId"
+                v-on:refresh="needRefresh"
+              />
               <v-btn @click="addUser" color="success" flat>
                 <v-icon>mdi-account-plus</v-icon>
               </v-btn>
               <v-btn @click="updateUser" color="info" flat>
                 <v-icon>mdi-account-edit</v-icon>
               </v-btn>
-              <v-btn color="error" flat>
+              <v-btn @click="deleteUser" color="error" flat>
                 <v-icon>mdi-account-remove</v-icon>
               </v-btn>
             </v-toolbar-items>
@@ -144,6 +149,29 @@ export default {
         this.openUserDialog("用户更新");
       }
     },
+    deleteUser() {
+      let l = this.selected.length;
+      if (l == 0) {
+        alert("请选择待删除的用户数据");
+      } else {
+        this.$axios
+          .post("/api/sys/user/del/batch/", this.selected)
+          .then(response => {
+            this.selected = [];
+            let code = response.data.code;
+            if (code === 0) {
+              this.getDataFromApi();
+              alert("删除成功");
+            } else {
+              alert("删除失败");
+            }
+          })
+          .catch(error => {
+            this.selected = [];
+            console.log(error);
+          });
+      }
+    },
     checkUser() {
       this.openUserDialog("用户信息");
     },
@@ -161,6 +189,8 @@ export default {
         .then(response => {
           this.loading = false;
           let isEmpty = response.data.data.empty;
+          // 查询后清除已经选择的内容
+          this.selected = [];
           if (isEmpty) {
             console.log("empty");
           } else {
