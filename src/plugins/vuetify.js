@@ -7,7 +7,7 @@ import "vuetify/dist/vuetify.min.css";
 // Translation provided by Vuetify (javascript)
 import zhHans from "vuetify/es5/locale/zh-Hans";
 
-// 注入axios
+// 注入vuetify
 Vue.prototype.$vuetify = Vuetify;
 Vue.use(Vuetify, {
   iconfont: "mdi",
