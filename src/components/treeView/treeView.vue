@@ -1,55 +1,62 @@
 <template>
-  <v-treeview
-    :active.sync="active"
-    :items="items"
-    :load-children="fetchChild"
-    activatable
-    active-class="primary--text"
-    class="grey lighten-5"
-    transition
-  ></v-treeview>
+  <el-tree  :props="defaultProps" :load="loadNode" lazy node-key="id" @node-click="handleNodeClick"></el-tree>
 </template>
 <script>
 export default {
-  watch: {
-    active: function(newActive, oldActive) {
-      let data = {
-        old: oldActive,
-        new: newActive
-      };
-      this.$emit("tree-click", data);
-    }
-  },
-  props: {
-    items: {
-      type: Array
-    }
-  },
   data() {
     return {
       active: [],
       open: [],
-      users: []
+      users: [],
+      defaultProps: {
+        children: "children",
+        label: "name"
+      }
     };
   },
   methods: {
+    handleNodeClick(data) {
+      // 将被点击的data对象传递出去
+      this.$emit("tree-click", data);
+    },
+    loadNode(node, resolve) {
+      if (node.level === 0) {
+        this.queryTreeRoot()
+          .then(response => {
+            return resolve(response.data.data);
+          })
+          .catch(error => {
+            this.$msgbox({
+              type: "error",
+              message: "根节点查询失败，原因：" + error
+            });
+          });
+      } else if (node.level >= 1) {
+        this.fetchChild(node.data)
+          .then(res => {
+            resolve(res.data.data);
+          })
+          .catch(error => {
+            this.$msgbox({
+              type: "error",
+              message: "孩子节点查询失败，原因：" + error
+            });
+          });
+      }
+    },
+    queryTreeRoot() {
+      let url = "/api/sys/org/tree/root";
+      let method = "get";
+      let data = {};
+      let params = {};
+      return this.$getDataByApi(url, method, data, params);
+    },
     fetchChild(item) {
       let url = "/api/sys/org/tree/child";
       let method = "post";
       let data = item;
       let params = {};
-      this.$getDataByApi(url, method, data, params)
-        .then(response => {
-          for (let child in response.data.data) {
-            item.children.push(response.data.data[child]);
-          }
-        })
-        .catch(error => {
-          this.$msgbox({
-              type: "error",
-              message: "获取孩子节点失败,原因：" + error
-            });
-        });
+      return this.$getDataByApi(url, method, data, params);
     }
   }
 };

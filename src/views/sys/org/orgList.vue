@@ -1,5 +1,5 @@
 <template>
-  <m-tree-view :items="items"></m-tree-view>
+  <m-tree-view ></m-tree-view>
 </template>
 <script>
 
@@ -14,7 +14,7 @@ export default {
     };
   },
   mounted() {
-    this.queryTreeRoot();
+    
   },
   methods: {
     queryTreeRoot() {
