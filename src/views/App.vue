@@ -43,6 +43,7 @@
       <v-spacer></v-spacer>
       <v-btn  flat href="#">
         <router-link color="black" class="mr-2" to="/main/userConfig">userConfig</router-link>
+        <router-link color="black" class="mr-2" to="/main/treeConfig">treeConfig</router-link>
       </v-btn>
     </v-toolbar>
 

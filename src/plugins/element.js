@@ -5,9 +5,11 @@
  */
 import Vue from 'vue';
 import {
-    MessageBox
+    MessageBox,
+    Tree
 } from "element-ui";
 
+Vue.component(Tree.name, Tree);
 Vue.component(MessageBox.name, MessageBox);
 // 注入element-ui
 Vue.prototype.$msgbox = MessageBox;
