@@ -1,7 +1,6 @@
 import Vue from 'vue';
 import router from "./router";
 import axios from "axios";
-import "./plugins/vuetify";
 import "./plugins/filter";
 import "./plugins/element";
 import RouterVue from './views/router.vue';

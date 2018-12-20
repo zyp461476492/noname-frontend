@@ -4,12 +4,7 @@
  * @date 2018-12-12
  */
 import Vue from 'vue';
-import {
-    MessageBox,
-    Tree
-} from "element-ui";
+import ElementUI from 'element-ui';
+import 'element-ui/lib/theme-chalk/index.css';
 
-Vue.component(Tree.name, Tree);
-Vue.component(MessageBox.name, MessageBox);
-// 注入element-ui
-Vue.prototype.$msgbox = MessageBox;
+Vue.use(ElementUI);
