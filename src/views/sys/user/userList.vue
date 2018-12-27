@@ -1,5 +1,5 @@
 <template>
-  <v-layout column warp>
+  <!-- <v-layout column warp>
     <v-flex xs12 ma-2>
       <breadcrumbs :items="breadcrumbsInfo"></breadcrumbs>
     </v-flex>
@@ -74,20 +74,95 @@
         </v-flex>
       </v-layout>
     </v-flex>
-  </v-layout>
+  </v-layout>-->
+  <el-card>
+    <div slot="header" class="clearfix">
+      <span>用户管理</span>
+      <el-button style="float: right; padding: 3px 0" type="text" @click="dialog=!dialog">添加用户</el-button>
+    </div>
+    <user-dialog :id="dialogId" :dialog="dialog" :dialogTitle="dialogTitle"></user-dialog>
+    <el-row>
+      <el-col :span="24">
+        <el-table :data="userInfo">
+          <el-table-column type="expand">
+            <template slot-scope="props">
+              <el-form  label-position="left" inline class="demo-table-expand">
+                <el-form-item label="用户ID">
+                  <span>{{ props.row.id }}</span>
+                </el-form-item>
+                <el-form-item label="用户姓名">
+                  <span>{{ props.row.name }}</span>
+                </el-form-item>
+                <el-form-item label="所属部门">
+                  <span>{{ props.row.id }}</span>
+                </el-form-item>
+                <el-form-item label="性别">
+                  <span>{{ props.row.gender }}</span>
+                </el-form-item>
+                <el-form-item label="邮箱">
+                  <span>{{ props.row.email }}</span>
+                </el-form-item>
+                <el-form-item label="手机号">
+                  <span>{{ props.row.phone }}</span>
+                </el-form-item>
+                <el-form-item label="注册时间">
+                  <span>{{ props.row.createDate }}</span>
+                </el-form-item>
+                <el-form-item label="更新时间">
+                  <span>{{ props.row.updateDate }}</span>
+                </el-form-item>
+                <el-form-item label="排序值">
+                  <span>{{ props.row.order }}</span>
+                </el-form-item>
+              </el-form>
+            </template>
+          </el-table-column>
+          <!-- <el-table-column type="index"></el-table-column> -->
+          <el-table-column prop="name" label="姓名"></el-table-column>
+          <el-table-column prop="createDate" label="注册日期"></el-table-column>
+          <el-table-column prop="updateDate" label="更新日期"></el-table-column>
+          <el-table-column prop="status" label="状态"></el-table-column>
+          <el-table-column fixed="right" label="操作">
+            <template slot-scope="scope">
+              <el-button
+                @click.native.prevent="deleteRow(scope.$index, tableData4)"
+                type="text"
+                size="small"
+              >移除</el-button>
+              <el-button
+                @click.native.prevent="deleteRow(scope.$index, tableData4)"
+                type="text"
+                size="small"
+              >修改</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-pagination
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page="currentPage"
+        :page-sizes="pageSizes"
+        :page-size="pageSize"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="totalCount"
+        class="page"
+      ></el-pagination>
+    </el-row>
+  </el-card>
 </template>
 
 <script>
 // @ 是vue自动生成时设置 /src目录的别名
-import breadcrumbs from "@/components/breadcrumbs/breadcrumbs.vue";
+// import breadcrumbs from "@/components/breadcrumbs/breadcrumbs.vue";
 import userDialog from "@/components/userDialog/userDialog.vue";
-import customSnackBar from "@/components/snackBar/customSnackBar.vue";
+// import customSnackBar from "@/components/snackBar/customSnackBar.vue";
 
 export default {
   components: {
-    breadcrumbs: breadcrumbs,
-    userDialog: userDialog,
-    customSnackBar: customSnackBar
+    userDialog: userDialog
   },
   watch: {
     pagination: {
@@ -112,22 +187,10 @@ export default {
       dialog: false,
       dialogId: -1,
       totalCount: 0,
-      pagination: {},
+      pageSizes: [10, 20, 30, 40],
+      pageSize: 10,
+      currentPage: 1,
       loading: false,
-      headers: [
-        { text: "编号", value: "id", sortable: false },
-        { text: "登录名", value: "loginId", sortable: false },
-        { text: "姓名", value: "name", sortable: false },
-        { text: "部门", value: "dept", sortable: false },
-        { text: "性别", value: "gender", sortable: false },
-        { text: "联系电话", value: "phone", sortable: false },
-        { text: "注册时间", value: "createDate", sortable: false },
-        { text: "更新时间", value: "updateDate", sortable: false },
-        { text: "更新人", value: "updateBy", sortable: false },
-        { text: "最近登录IP", value: "lastLoginIp", sortable: false },
-        { text: "排序值", value: "order" },
-        { text: "状态", value: "status", sortable: false }
-      ],
       userInfo: [],
       breadcrumbsInfo: [
         {
@@ -245,15 +308,22 @@ export default {
     initPagination() {
       this.pagination.page = 1;
     },
+    handleSizeChange(val) {
+      this.pageSize = val;
+      this.getDataFromApi();
+    },
+    handleCurrentChange(val) {
+      this.currentPage = val;
+      this.getDataFromApi();
+    },
     getDataFromApi() {
       this.loading = true;
       this.$axios({
         method: "get",
         url: "/api/sys/user/list/",
         params: {
-          limit: this.pagination.rowsPerPage,
-          offset: this.pagination.page - 1,
-          sortBy: this.pagination.sortBy
+          limit: this.pageSize,
+          offset: this.currentPage - 1
         }
       })
         .then(response => {
@@ -277,5 +347,29 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
+.clearfix:before,
+.clearfix:after {
+  display: table;
+  content: "";
+}
+.clearfix:after {
+  clear: both;
+}
+.page {
+  margin-top: 10px;
+  float: right;
+}
+.demo-table-expand {
+  font-size: 0;
+}
+.demo-table-expand label {
+  width: 90px;
+  color: #99a9bf;
+}
+.demo-table-expand .el-form-item {
+  margin-right: 0;
+  margin-bottom: 0;
+  width: 30%;
+}
 </style>
