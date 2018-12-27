@@ -1,6 +1,6 @@
 <template>
   <el-dialog  :title="dialogTitle" :visible.sync="dialogFormVisible">
-    <el-form :model="form" :inline="inline">
+    <el-form :model="form"  status-icon :inline="inline">
       <el-form-item label="登录名" :label-width="formLabelWidth">
         <el-input v-model="form.loginId" autocomplete="off"></el-input>
       </el-form-item>
@@ -75,19 +75,12 @@ export default {
       type: Boolean,
       default: true,
       required: false
-    },
-    readFlag: {
-      type: Boolean,
-      default: false,
-      required: false
     }
   },
   data() {
     return {
       formLabelWidth: '120px',
       dialogFormVisible: false,
-      valid: false,
-      genderItems: [{ text: "男", value: "0" }, { text: "女", value: "1" }],
       form: {
         loginId: "",
         name: "",
