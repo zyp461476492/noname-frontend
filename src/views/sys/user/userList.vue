@@ -1,92 +1,23 @@
 <template>
-  <!-- <v-layout column warp>
-    <v-flex xs12 ma-2>
-      <breadcrumbs :items="breadcrumbsInfo"></breadcrumbs>
-    </v-flex>
-    <v-flex xs12 ml-2 mr-2>
-      <v-layout column>
-        <customSnackBar
-          :color="snackbarColor"
-          :text="alertMsg"
-          :snackbar="snackbar"
-          :timeout="snackbarTimeout"
-        />
-        <v-flex xs12>
-          <v-toolbar>
-            <v-toolbar-title>用户管理</v-toolbar-title>
-            <v-spacer></v-spacer>
-            <v-toolbar-items>
-              <user-dialog
-                :dialog="dialog"
-                :dialogTitle="dialogTitle"
-                :id="dialogId"
-                :readFlag="dialogReadonly"
-                v-on:refresh="needRefresh"
-                v-on:msg-tip="childTips"
-                v-on:dialog-close="cancelSelected"
-              />
-              <v-btn @click="showUser" color="primary" flat>
-                <v-icon>mdi-account-search</v-icon>
-              </v-btn>
-              <v-btn @click="addUser" color="success" flat>
-                <v-icon>mdi-account-plus</v-icon>
-              </v-btn>
-              <v-btn @click="updateUser" color="info" flat>
-                <v-icon>mdi-account-edit</v-icon>
-              </v-btn>
-              <v-btn @click="deleteUserConfirm" color="error" flat>
-                <v-icon>mdi-account-remove</v-icon>
-              </v-btn>
-            </v-toolbar-items>
-          </v-toolbar>
-        </v-flex>
-        <v-flex xs12 mt-1>
-          <v-card>
-            <v-data-table
-              v-model="selected"
-              :headers="headers"
-              :items="userInfo"
-              :pagination.sync="pagination"
-              :total-items="totalCount"
-              :loading="loading"
-              :rows-per-page-items="[5,10,25]"
-              select-all
-            >
-              <template slot="items" slot-scope="props">
-                <td>
-                  <v-checkbox v-model="props.selected" primary hide-details></v-checkbox>
-                </td>
-                <td>{{props.index + 1 + ((pagination.page - 1 ) * pagination.rowsPerPage)}}</td>
-                <td>{{ props.item.loginId}}</td>
-                <td>{{ props.item.name}}</td>
-                <td>{{ props.item.orgId}}</td>
-                <td>{{ props.item.gender}}</td>
-                <td>{{ props.item.phone}}</td>
-                <td>{{ props.item.createDate | formateDate}}</td>
-                <td>{{ props.item.updateDate | formateDate}}</td>
-                <td>{{ props.item.updateBy}}</td>
-                <td>{{ props.item.lastLoginIp}}</td>
-                <td>{{ props.item.order}}</td>
-                <td>{{ props.item.status}}</td>
-              </template>
-            </v-data-table>
-          </v-card>
-        </v-flex>
-      </v-layout>
-    </v-flex>
-  </v-layout>-->
   <el-card>
     <div slot="header" class="clearfix">
       <span>用户管理</span>
-      <el-button style="float: right; padding: 3px 0" type="text" @click="dialog=!dialog">添加用户</el-button>
+      <el-button style="float: right; padding: 3px 0" type="text" @click="addUser()">添加用户</el-button>
     </div>
-    <user-dialog :id="dialogId" :dialog="dialog" :dialogTitle="dialogTitle"></user-dialog>
+    <user-dialog
+      :id="dialogId"
+      :dialog="dialog"
+      :dialogTitle="dialogTitle"
+      :dialogReadonly="dialogReadonly"
+      :type="dialogType"
+      v-on:refresh="needRefresh"
+    ></user-dialog>
     <el-row>
       <el-col :span="24">
         <el-table :data="userInfo">
           <el-table-column type="expand">
             <template slot-scope="props">
-              <el-form  label-position="left" inline class="demo-table-expand">
+              <el-form label-position="left" inline class="demo-table-expand">
                 <el-form-item label="用户ID">
                   <span>{{ props.row.id }}</span>
                 </el-form-item>
@@ -125,12 +56,12 @@
           <el-table-column fixed="right" label="操作">
             <template slot-scope="scope">
               <el-button
-                @click.native.prevent="deleteRow(scope.$index, tableData4)"
+                @click.native.prevent="deleteUserConfirm(scope.$index)"
                 type="text"
                 size="small"
               >移除</el-button>
               <el-button
-                @click.native.prevent="deleteRow(scope.$index, tableData4)"
+                @click.native.prevent="updateUser(scope.$index)"
                 type="text"
                 size="small"
               >修改</el-button>
@@ -158,7 +89,7 @@
 // @ 是vue自动生成时设置 /src目录的别名
 // import breadcrumbs from "@/components/breadcrumbs/breadcrumbs.vue";
 import userDialog from "@/components/userDialog/userDialog.vue";
-// import customSnackBar from "@/components/snackBar/customSnackBar.vue";
+import { notifyMsg } from "@/plugins/common.js";
 
 export default {
   components: {
@@ -186,6 +117,7 @@ export default {
       dialogReadonly: false,
       dialog: false,
       dialogId: -1,
+      dialogType: "add",
       totalCount: 0,
       pageSizes: [10, 20, 30, 40],
       pageSize: 10,
@@ -207,106 +139,62 @@ export default {
     };
   },
   methods: {
-    cancelSelected() {
-      // 取消选择的内容
-      this.selected = [];
-    },
-
-    childTips(tipInfo) {
-      this.snackbar = !this.snackbar;
-      this.alertMsg = tipInfo.msg;
-      this.snackbarColor = tipInfo.type;
-    },
-    tips(text, type) {
-      this.snackbar = !this.snackbar;
-      this.alertMsg = text;
-      this.snackbarColor = type;
-    },
     needRefresh() {
-      this.initPagination();
+      this.getDataFromApi();
     },
     openUserDialog(title) {
       this.dialogTitle = title;
       this.dialog = !this.dialog;
     },
-    showUser() {
-      let l = this.selected.length;
-      if (l != 1) {
-        this.tips("请选择一个待查看的用户", "warning");
-      } else if (l == 1) {
-        // 获取选中数据ID
-        let id = this.selected[0].id;
-        this.dialogId = id;
-        // 设置弹窗状态为只读
-        this.dialogReadonly = true;
-        this.openUserDialog("用户信息");
-      }
-    },
     addUser() {
       this.dialogId = -1;
+      this.dialogType = "add";
       this.dialogReadonly = false;
       this.openUserDialog("用户新增");
     },
-    updateUser() {
+    updateUser(index) {
       this.dialogReadonly = false;
-      let l = this.selected.length;
-      if (l != 1) {
-        this.tips("请选择一个待修改的用户", "warning");
-      } else if (l == 1) {
-        // 获取选中数据ID
-        let id = this.selected[0].id;
-        this.dialogId = id;
-        this.openUserDialog("用户更新");
-      }
+      // 获取选中数据ID
+      let id = this.userInfo[index].id;
+      this.dialogType = "update";
+      this.dialogId = id;
+      this.openUserDialog("用户更新");
     },
-    deleteUserConfirm() {
-      let l = this.selected.length;
-      if (l == 0) {
-        this.tips("请选择待删除的用户", "warning");
-      } else {
-        this.$msgbox
-          .confirm("此操作将永久删除该用户, 是否继续?", "提示", {
-            confirmButtonText: "确定",
-            cancelButtonText: "取消",
-            type: "warning"
-          })
-          .then(() => {
-            this.deleteUser();
-            this.cancelSelected();
-            this.$msgbox({
-              type: "success",
-              message: "删除成功!"
-            });
-          })
-          .catch(() => {
-            // 清除已经选择的内容
-            this.cancelSelected();
-          });
-      }
+    deleteUserConfirm(index) {
+      this.$msgbox
+        .confirm("此操作将永久删除该用户, 是否继续?", "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        })
+        .then(() => {
+          this.deleteUser(index);
+        })
+        .catch(() => {
+          // 取消
+        });
     },
-    deleteUser() {
+    deleteUser(index) {
+      let url = "/api/sys/user/del/";
+      url += this.userInfo[index].id;
       this.$axios
-        .post("/api/sys/user/del/batch/", this.selected)
+        .get(url)
         .then(response => {
           this.selected = [];
           let code = response.data.code;
           if (code === 0) {
-            this.initPagination();
-            this.tips("删除成功", "success");
+            this.getDataFromApi();
+            notifyMsg(this.$notify, "提示", "删除成功", "success");
           } else {
-            this.tips("删除失败", "error");
+            notifyMsg(this.$notify, "提示", "删除失败", "error");
           }
         })
         .catch(error => {
-          this.selected = [];
-          this.tips("删除失败，网络异常" + error, "error");
+          notifyMsg(this.$notify, "提示", "删除失败" + error, "error");
         });
     },
     checkUser() {
       this.openUserDialog("用户信息");
-    },
-    initPagination() {
-      this.pagination.page = 1;
     },
     handleSizeChange(val) {
       this.pageSize = val;
@@ -340,7 +228,12 @@ export default {
         })
         .catch(error => {
           this.loading = false;
-          this.tips("查询请求失败, error:" + error, "error");
+          notifyMsg(
+            this.$notify,
+            "提示",
+            "查询请求失败, error:" + error,
+            "error"
+          );
         });
     }
   }

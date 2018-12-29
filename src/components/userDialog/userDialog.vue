@@ -1,52 +1,51 @@
 <template>
-  <el-dialog  :title="dialogTitle" :visible.sync="dialogFormVisible">
-    <el-form :model="form"  status-icon :inline="inline">
-      <el-form-item label="登录名" :label-width="formLabelWidth">
+  <el-dialog :title="dialogTitle" :visible.sync="dialogFormVisible">
+    <el-form :model="form" status-icon :inline="inline" :rules="rules" ref="form">
+      <el-form-item label="登录名" :label-width="formLabelWidth" prop="loginId">
         <el-input v-model="form.loginId" autocomplete="off"></el-input>
       </el-form-item>
-      <el-form-item label="用户姓名" :label-width="formLabelWidth">
+      <el-form-item label="用户姓名" :label-width="formLabelWidth" prop="name">
         <el-input v-model="form.name" autocomplete="off"></el-input>
       </el-form-item>
       <el-form-item label="所属公司" :label-width="formLabelWidth">
         <el-input v-model="form.orgId" autocomplete="off"></el-input>
       </el-form-item>
-      <el-form-item label="性别" :label-width="formLabelWidth">
-        <el-input v-model="form.gender" autocomplete="off"></el-input>
-      </el-form-item>
-      <el-form-item label="邮箱" :label-width="formLabelWidth">
+      <el-form-item label="邮箱" :label-width="formLabelWidth" prop="email">
         <el-input v-model="form.email" autocomplete="off"></el-input>
       </el-form-item>
-      <el-form-item label="电话" :label-width="formLabelWidth">
+      <el-form-item label="电话" :label-width="formLabelWidth" prop="phone">
         <el-input v-model="form.phone" autocomplete="off"></el-input>
       </el-form-item>
-      <el-form-item label="身份证号" :label-width="formLabelWidth">
+      <el-form-item label="身份证号" :label-width="formLabelWidth" prop="identifyCard">
         <el-input v-model="form.identifyCard" autocomplete="off"></el-input>
       </el-form-item>
-      <el-form-item label="排序" :label-width="formLabelWidth">
+      <el-form-item label="排序" :label-width="formLabelWidth" prop="order">
         <el-input v-model="form.order" autocomplete="off"></el-input>
       </el-form-item>
-      <el-form-item label="性别" :label-width="formLabelWidth">
-        <el-select v-model="form.region" placeholder="请选择性别">
+      <el-form-item label="性别" :label-width="formLabelWidth" prop="gender">
+        <el-select v-model="form.gender" placeholder="请选择性别">
           <el-option label="男" value="0"></el-option>
           <el-option label="女" value="1"></el-option>
         </el-select>
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
-      <el-button @click="dialogFormVisible = false">取 消</el-button>
-      <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+      <el-button @click="closeDialog()">取 消</el-button>
+      <el-button type="primary" @click="submitForm('form')">确 定</el-button>
     </div>
   </el-dialog>
 </template>
 <script>
+import { notifyMsg } from "@/plugins/common.js";
 export default {
   mounted() {},
   watch: {
+    type() {
+      if (this.type === "add") {
+        this.$refs["form"].resetFields();
+      }
+    },
     dialog() {
-      // 监听弹窗发生变化时，因为有组件复用的情况，清除表单中的值
-      // 后续替换vueliate
-      // 默认设置排序值为0
-      this.form.order = 0;
       this.dialogFormVisible = true;
     },
     id() {
@@ -60,7 +59,14 @@ export default {
     }
   },
   props: {
+    type: {
+      type: String
+    },
     dialog: {
+      type: Boolean,
+      default: false
+    },
+    dialogReadonly: {
       type: Boolean,
       default: false
     },
@@ -78,13 +84,51 @@ export default {
     }
   },
   data() {
+    let checkId = (rule, value, callback) => {
+      let reg = /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/;
+      if (value !== "") {
+        if (!reg.test(value)) {
+          callback(new Error("身份证格式错误"));
+        } else {
+          callback();
+        }
+      } else {
+        callback();
+      }
+    };
+    let checkEmail = (rule, value, callback) => {
+      if (value !== "") {
+        let reg = new RegExp(
+          "^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$"
+        );
+        if (!reg.test(value)) {
+          callback(new Error("邮箱格式错误"));
+        } else {
+          callback();
+        }
+      } else {
+        callback();
+      }
+    };
+    let checkPhone = (rule, value, callback) => {
+      if (value !== "") {
+        var myreg = /^[1][3,4,5,7,8][0-9]{9}$/;
+        if (!myreg.test(value)) {
+          callback(new Error("手机号格式错误"));
+        } else {
+          callback();
+        }
+      } else {
+        callback();
+      }
+    };
     return {
-      formLabelWidth: '120px',
+      formLabelWidth: "120px",
       dialogFormVisible: false,
       form: {
         loginId: "",
         name: "",
-        orgId: "",
+        orgId: "1",
         phone: "13150337230",
         email: "1@qq.com",
         identifyCard: "111111111111111111",
@@ -92,6 +136,37 @@ export default {
         order: 0,
         status: 0,
         lastLoginIp: "127.0.0.1"
+      },
+      rules: {
+        loginId: [
+          { required: true, message: "请输入登录名", trigger: "blur" },
+          { min: 3, max: 11, message: "长度在 3 到 11 个字符", trigger: "blur" }
+        ],
+        name: [
+          { required: true, message: "请输入用户姓名", trigger: "blur" },
+          { min: 1, max: 20, message: "长度在 1 到 20 个字符", trigger: "blur" }
+        ],
+        orgId: [
+          { required: true, message: "请选择所属部门", trigger: "change" }
+        ],
+        phone: [
+          { required: false, message: "请输入手机号", trigger: "blur" },
+          { validator: checkPhone, trigger: "blur" }
+        ],
+        email: [
+          { required: false, message: "请输入邮箱", trigger: "blur" },
+          { validator: checkEmail, trigger: "blur" }
+        ],
+        identifyCard: [
+          { required: false, message: "请输入身份证号", trigger: "blur" },
+          { validator: checkId, trigger: "blur" }
+        ],
+        order: [
+          { required: true, message: "请输入排序值", trigger: "blur" },
+          { type: "number", message: "请输入数字", trigger: "blur" }
+        ],
+        gender: [{ required: true, message: "请选择性别", trigger: "blur" }],
+        status: []
       }
     };
   },
@@ -105,10 +180,10 @@ export default {
   },
   methods: {
     initFormData() {
-      this.formData = {
+      this.form = {
         loginId: "",
         name: "",
-        orgId: "",
+        orgId: "1",
         phone: "13150337230",
         email: "1@qq.com",
         identifyCard: "111111111111111111",
@@ -116,12 +191,6 @@ export default {
         order: 0,
         status: 0,
         lastLoginIp: "127.0.0.1"
-      };
-    },
-    buildTipInfo(msg, type) {
-      return {
-        msg: msg,
-        type: type
       };
     },
     notifyParentClose() {
@@ -141,28 +210,31 @@ export default {
         .then(response => {
           let resCode = response.data.code;
           if (resCode === 0) {
+            // 清除之前的数据
+            this.$refs["form"].resetFields();
             // 成功
             let userInfo = response.data.data;
-            this.formData.loginId = userInfo.loginId;
-            this.formData.name = userInfo.name;
-            this.formData.orgId = userInfo.orgId;
-            this.formData.phone = userInfo.phone;
-            this.formData.email = userInfo.email;
-            this.formData.identifyCard = userInfo.identifyCard;
-            this.formData.gender = userInfo.gender;
-            this.formData.order = userInfo.order;
-            this.formData.status = userInfo.status;
-            this.formData.createDate = userInfo.createDate;
+            this.form.loginId = userInfo.loginId;
+            this.form.name = userInfo.name;
+            this.form.orgId = userInfo.orgId;
+            this.form.phone = userInfo.phone;
+            this.form.email = userInfo.email;
+            this.form.identifyCard = userInfo.identifyCard;
+            this.form.gender = userInfo.gender;
+            this.form.order = userInfo.order;
+            this.form.status = userInfo.status;
+            this.form.createDate = userInfo.createDate;
           } else {
             // 失败
-            this.notifyParentTips(
-              this.buildTipInfo("查询用户信息失败", "warning")
-            );
+            notifyMsg(this.$notify, "提示", "查询用户信息失败", "warning");
           }
         })
         .catch(error => {
-          this.notifyParentTips(
-            this.buildTipInfo("查询用户信息-网络请求失败:" + error, "error")
+          notifyMsg(
+            this.$notify,
+            "提示",
+            "查询用户信息-网络请求失败:" + error,
+            "error"
           );
         });
     },
@@ -175,9 +247,9 @@ export default {
     },
     ajaxUpdateUser() {
       let url = "/api/sys/user/update/";
-      this.formData.id = this.id;
+      this.form.id = this.id;
       var reqObj = {
-        data: this.formData,
+        data: this.form,
         updateBy: 0
       };
       this.getDataFromApi(url, "post", reqObj)
@@ -186,60 +258,47 @@ export default {
           if (resCode === 0) {
             // 成功
             this.notifyParent();
-            this.notifyParentTips(
-              this.buildTipInfo("更新用户信息成功", "success")
-            );
-            this.dialogFlag = false;
-            this.$refs.form.reset();
+            notifyMsg(this.$notify, "提示", "更新用户信息成功", "success");
+            this.dialogFormVisible = false;
+            this.initFormData();
           } else {
             // 失败
-            this.notifyParentTips(
-              this.buildTipInfo("更新用户信息失败", "warning")
-            );
+            notifyMsg(this.$notify, "提示", "更新用户信息失败", "warning");
           }
         })
         .catch(error => {
-          this.notifyParentTips(
-            this.buildTipInfo("更新用户信息-网络请求失败:" + error, "error")
+          notifyMsg(
+            this.$notify,
+            "提示",
+            "更新用户信息-网络请求失败:" + error,
+            "error"
           );
         });
     },
     ajaxAddUser() {
       let url = "/api/sys/user/add/";
-      this.getDataFromApi(url, "post", this.formData)
+      this.getDataFromApi(url, "post", this.form)
         .then(response => {
           let resCode = response.data.code;
           if (resCode === 0) {
             // 成功
             this.notifyParent();
-            this.notifyParentTips(
-              this.buildTipInfo("添加用户信息成功", "success")
-            );
-            this.dialogFlag = false;
+            notifyMsg(this.$notify, "提示", "添加用户信息成功", "success");
+            this.dialogFormVisible = false;
             this.initFormData();
           } else {
             // 失败
-            this.notifyParentTips(
-              this.buildTipInfo("添加用户信息失败", "warning")
-            );
+            notifyMsg(this.$notify, "提示", "添加用户信息失败", "warning");
           }
         })
         .catch(error => {
-          this.notifyParentTips(
-            this.buildTipInfo("添加用户信息-网络请求失败:" + error, "error")
+          notifyMsg(
+            this.$notify,
+            "提示",
+            "添加用户信息-网络请求失败:" + error,
+            "error"
           );
         });
-    },
-    submit() {
-      if (this.$refs.form.validate()) {
-        // Native form submission is not yet supported
-        if (this.updateFlag) {
-          this.ajaxUpdateUser();
-        } else {
-          this.ajaxAddUser();
-        }
-      }
-      // this.$refs.form.reset();
     },
     checkLoginId(name) {
       // 后台检查用户名
@@ -249,8 +308,21 @@ export default {
       }
       return name !== "@@@";
     },
+    submitForm(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          if (this.updateFlag) {
+            this.ajaxUpdateUser();
+          } else {
+            this.ajaxAddUser();
+          }
+        } else {
+          return false;
+        }
+      });
+    },
     closeDialog() {
-      this.dialogFlag = false;
+      this.dialogFormVisible = false;
       this.notifyParentClose();
     }
   }
