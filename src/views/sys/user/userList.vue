@@ -1,99 +1,109 @@
 <template>
-  <el-card>
-    <div slot="header" class="clearfix">
-      <span>用户管理</span>
-      <el-button style="float: right; padding: 3px 0" type="text" @click="addUser()">添加用户</el-button>
-    </div>
-    <user-dialog
-      :id="dialogId"
-      :dialog="dialog"
-      :dialogTitle="dialogTitle"
-      :dialogReadonly="dialogReadonly"
-      :type="dialogType"
-      v-on:refresh="needRefresh"
-    ></user-dialog>
-    <el-row>
-      <el-col :span="24">
-        <el-table :data="userInfo">
-          <el-table-column type="expand">
-            <template slot-scope="props">
-              <el-form label-position="left" inline class="demo-table-expand">
-                <el-form-item label="用户ID">
-                  <span>{{ props.row.id }}</span>
-                </el-form-item>
-                <el-form-item label="用户姓名">
-                  <span>{{ props.row.name }}</span>
-                </el-form-item>
-                <el-form-item label="所属部门">
-                  <span>{{ props.row.id }}</span>
-                </el-form-item>
-                <el-form-item label="性别">
-                  <span>{{ props.row.gender }}</span>
-                </el-form-item>
-                <el-form-item label="邮箱">
-                  <span>{{ props.row.email }}</span>
-                </el-form-item>
-                <el-form-item label="手机号">
-                  <span>{{ props.row.phone }}</span>
-                </el-form-item>
-                <el-form-item label="注册时间">
-                  <span>{{ props.row.createDate }}</span>
-                </el-form-item>
-                <el-form-item label="更新时间">
-                  <span>{{ props.row.updateDate }}</span>
-                </el-form-item>
-                <el-form-item label="排序值">
-                  <span>{{ props.row.order }}</span>
-                </el-form-item>
-              </el-form>
-            </template>
-          </el-table-column>
-          <!-- <el-table-column type="index"></el-table-column> -->
-          <el-table-column prop="name" label="姓名"></el-table-column>
-          <el-table-column prop="createDate" label="注册日期"></el-table-column>
-          <el-table-column prop="updateDate" label="更新日期"></el-table-column>
-          <el-table-column prop="status" label="状态"></el-table-column>
-          <el-table-column fixed="right" label="操作">
-            <template slot-scope="scope">
-              <el-button
-                @click.native.prevent="deleteUserConfirm(scope.$index)"
-                type="text"
-                size="small"
-              >移除</el-button>
-              <el-button
-                @click.native.prevent="updateUser(scope.$index)"
-                type="text"
-                size="small"
-              >修改</el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-      </el-col>
-    </el-row>
-    <el-row>
-      <el-pagination
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        :current-page="currentPage"
-        :page-sizes="pageSizes"
-        :page-size="pageSize"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="totalCount"
-        class="page"
-      ></el-pagination>
-    </el-row>
-  </el-card>
+  <el-row>
+    <el-col :span="24" class="breadcrumb">
+      <el-card>
+        <m-breadcrumbs :items="breadcrumbsInfo"></m-breadcrumbs>
+      </el-card>
+    </el-col>
+    <el-col :span="24">
+      <el-card>
+        <div slot="header" class="clearfix">
+          <span>用户管理</span>
+          <el-button style="float: right; padding: 3px 0" type="text" @click="addUser()">添加用户</el-button>
+        </div>
+        <user-dialog
+          :id="dialogId"
+          :dialog="dialog"
+          :dialogTitle="dialogTitle"
+          :dialogReadonly="dialogReadonly"
+          :type="dialogType"
+          v-on:refresh="needRefresh"
+        ></user-dialog>
+        <el-row>
+          <el-col :span="24">
+            <el-table :data="userInfo">
+              <el-table-column type="expand">
+                <template slot-scope="props">
+                  <el-form label-position="left" inline class="demo-table-expand">
+                    <el-form-item label="用户ID">
+                      <span>{{ props.row.id }}</span>
+                    </el-form-item>
+                    <el-form-item label="用户姓名">
+                      <span>{{ props.row.name }}</span>
+                    </el-form-item>
+                    <el-form-item label="所属部门">
+                      <span>{{ props.row.id }}</span>
+                    </el-form-item>
+                    <el-form-item label="性别">
+                      <span>{{ props.row.gender }}</span>
+                    </el-form-item>
+                    <el-form-item label="邮箱">
+                      <span>{{ props.row.email }}</span>
+                    </el-form-item>
+                    <el-form-item label="手机号">
+                      <span>{{ props.row.phone }}</span>
+                    </el-form-item>
+                    <el-form-item label="注册时间">
+                      <span>{{ props.row.createDate }}</span>
+                    </el-form-item>
+                    <el-form-item label="更新时间">
+                      <span>{{ props.row.updateDate }}</span>
+                    </el-form-item>
+                    <el-form-item label="排序值">
+                      <span>{{ props.row.order }}</span>
+                    </el-form-item>
+                  </el-form>
+                </template>
+              </el-table-column>
+              <!-- <el-table-column type="index"></el-table-column> -->
+              <el-table-column prop="name" label="姓名"></el-table-column>
+              <el-table-column prop="createDate" label="注册日期"></el-table-column>
+              <el-table-column prop="updateDate" label="更新日期"></el-table-column>
+              <el-table-column prop="status" label="状态"></el-table-column>
+              <el-table-column fixed="right" label="操作">
+                <template slot-scope="scope">
+                  <el-button
+                    @click.native.prevent="deleteUserConfirm(scope.$index)"
+                    type="text"
+                    size="small"
+                  >移除</el-button>
+                  <el-button
+                    @click.native.prevent="updateUser(scope.$index)"
+                    type="text"
+                    size="small"
+                  >修改</el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-pagination
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :current-page="currentPage"
+            :page-sizes="pageSizes"
+            :page-size="pageSize"
+            layout="total, sizes, prev, pager, next, jumper"
+            :total="totalCount"
+            class="page"
+          ></el-pagination>
+        </el-row>
+      </el-card>
+    </el-col>
+  </el-row>
 </template>
 
 <script>
 // @ 是vue自动生成时设置 /src目录的别名
-// import breadcrumbs from "@/components/breadcrumbs/breadcrumbs.vue";
+import breadcrumbs from "@/components/breadcrumbs/breadcrumbs.vue";
 import userDialog from "@/components/userDialog/userDialog.vue";
 import { notifyMsg } from "@/plugins/common.js";
 
 export default {
   components: {
-    userDialog: userDialog
+    userDialog: userDialog,
+    "m-breadcrumbs": breadcrumbs
   },
   watch: {
     pagination: {
@@ -126,12 +136,12 @@ export default {
       userInfo: [],
       breadcrumbsInfo: [
         {
-          text: "系统设置",
+          name: "系统设置",
           disabled: true,
           href: "系统设置"
         },
         {
-          text: "用户管理",
+          name: "用户管理",
           disabled: false,
           href: "用户管理"
         }
@@ -241,6 +251,9 @@ export default {
 </script>
 
 <style>
+.breadcrumb {
+  margin-bottom: 10px;
+}
 .clearfix:before,
 .clearfix:after {
   display: table;

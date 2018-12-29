@@ -1,9 +1,9 @@
 <template>
-    <div>
-        <v-breadcrumbs :items="items">
-          <v-icon slot="divider">chevron_right</v-icon>
-        </v-breadcrumbs>
-      </div>
+    <el-breadcrumb separator-class="el-icon-arrow-right">
+        <el-breadcrumb-item v-for="(item, index) in items" :key="index.index">
+            {{item.name}}
+        </el-breadcrumb-item>
+    </el-breadcrumb>
 </template>
 <script>
 export default {
