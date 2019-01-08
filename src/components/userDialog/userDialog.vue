@@ -226,13 +226,12 @@ export default {
             this.form.createDate = userInfo.createDate;
           } else {
             // 失败
-            notifyMsg(this.$notify, "提示", "查询用户信息失败", "warning");
+            notifyMsg(this.$message, "查询用户信息失败", "warning");
           }
         })
         .catch(error => {
           notifyMsg(
-            this.$notify,
-            "提示",
+            this.$message,
             "查询用户信息-网络请求失败:" + error,
             "error"
           );
@@ -258,18 +257,17 @@ export default {
           if (resCode === 0) {
             // 成功
             this.notifyParent();
-            notifyMsg(this.$notify, "提示", "更新用户信息成功", "success");
+            notifyMsg(this.$message, "更新用户信息成功", "success");
             this.dialogFormVisible = false;
             this.initFormData();
           } else {
             // 失败
-            notifyMsg(this.$notify, "提示", "更新用户信息失败", "warning");
+            notifyMsg(this.$message, "更新用户信息失败", "warning");
           }
         })
         .catch(error => {
           notifyMsg(
-            this.$notify,
-            "提示",
+            this.$message,
             "更新用户信息-网络请求失败:" + error,
             "error"
           );
@@ -283,18 +281,17 @@ export default {
           if (resCode === 0) {
             // 成功
             this.notifyParent();
-            notifyMsg(this.$notify, "提示", "添加用户信息成功", "success");
+            notifyMsg(this.$message, "添加用户信息成功", "success");
             this.dialogFormVisible = false;
             this.initFormData();
           } else {
             // 失败
-            notifyMsg(this.$notify, "提示", "添加用户信息失败", "warning");
+            notifyMsg(this.$message, "添加用户信息失败", "warning");
           }
         })
         .catch(error => {
           notifyMsg(
-            this.$notify,
-            "提示",
+            this.$message,
             "添加用户信息-网络请求失败:" + error,
             "error"
           );

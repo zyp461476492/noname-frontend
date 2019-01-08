@@ -194,13 +194,13 @@ export default {
           let code = response.data.code;
           if (code === 0) {
             this.getDataFromApi();
-            notifyMsg(this.$notify, "提示", "删除成功", "success");
+            notifyMsg(this.$message, "删除成功", "success");
           } else {
-            notifyMsg(this.$notify, "提示", "删除失败", "error");
+            notifyMsg(this.$message, "删除失败", "error");
           }
         })
         .catch(error => {
-          notifyMsg(this.$notify, "提示", "删除失败" + error, "error");
+          notifyMsg(this.$message, "删除失败" + error, "error");
         });
     },
     checkUser() {
@@ -238,12 +238,7 @@ export default {
         })
         .catch(error => {
           this.loading = false;
-          notifyMsg(
-            this.$notify,
-            "提示",
-            "查询请求失败, error:" + error,
-            "error"
-          );
+          notifyMsg(this.$message, "查询请求失败, error:" + error, "error");
         });
     }
   }
