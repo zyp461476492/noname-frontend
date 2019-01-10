@@ -8,7 +8,7 @@
         <el-input v-model="form.name" autocomplete="off"></el-input>
       </el-form-item>
       <el-form-item label="所属公司" :label-width="formLabelWidth">
-        <el-input v-model="form.orgId" autocomplete="off"></el-input>
+        <org-input ref="orgInput"  v-on:tree-select="orgTreeSelect"/>
       </el-form-item>
       <el-form-item label="邮箱" :label-width="formLabelWidth" prop="email">
         <el-input v-model="form.email" autocomplete="off"></el-input>
@@ -37,7 +37,12 @@
 </template>
 <script>
 import { notifyMsg } from "@/plugins/common.js";
+import orgInput from "@/components/orgInput/orgInput.vue";
 export default {
+  name: "userDialog",
+  components: {
+    orgInput: orgInput
+  },
   mounted() {},
   watch: {
     type() {
@@ -128,7 +133,7 @@ export default {
       form: {
         loginId: "",
         name: "",
-        orgId: "1",
+        org: {},
         phone: "13150337230",
         email: "1@qq.com",
         identifyCard: "111111111111111111",
@@ -145,9 +150,6 @@ export default {
         name: [
           { required: true, message: "请输入用户姓名", trigger: "blur" },
           { min: 1, max: 20, message: "长度在 1 到 20 个字符", trigger: "blur" }
-        ],
-        orgId: [
-          { required: true, message: "请选择所属部门", trigger: "change" }
         ],
         phone: [
           { required: false, message: "请输入手机号", trigger: "blur" },
@@ -179,11 +181,15 @@ export default {
     }
   },
   methods: {
+    orgTreeSelect(id) {
+      // 组织机构树被选择
+      this.form.org.id = id;
+    },
     initFormData() {
       this.form = {
         loginId: "",
         name: "",
-        orgId: "1",
+        org: {},
         phone: "13150337230",
         email: "1@qq.com",
         identifyCard: "111111111111111111",
@@ -216,7 +222,8 @@ export default {
             let userInfo = response.data.data;
             this.form.loginId = userInfo.loginId;
             this.form.name = userInfo.name;
-            this.form.orgId = userInfo.orgId;
+            this.form.org = userInfo.org;
+            this.$refs.orgInput.changeOrgName(userInfo.org.name);
             this.form.phone = userInfo.phone;
             this.form.email = userInfo.email;
             this.form.identifyCard = userInfo.identifyCard;

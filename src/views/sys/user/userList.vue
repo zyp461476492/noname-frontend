@@ -32,7 +32,7 @@
                       <span>{{ props.row.name }}</span>
                     </el-form-item>
                     <el-form-item label="所属部门">
-                      <span>{{ props.row.id }}</span>
+                      <span>{{ props.row.org.name }}</span>
                     </el-form-item>
                     <el-form-item label="性别">
                       <span>{{ props.row.gender }}</span>
