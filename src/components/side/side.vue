@@ -10,6 +10,10 @@
       <i class="el-icon-menu"></i>
       <span slot="title">用户管理</span>
     </el-menu-item>
+    <el-menu-item index="/main/roleConfig">
+      <i class="el-icon-menu"></i>
+      <span slot="title">角色管理</span>
+    </el-menu-item>
     <el-menu-item index="/main/treeConfig">
       <i class="el-icon-menu"></i>
       <span slot="title">组织机构管理</span>

@@ -4,6 +4,7 @@ import App from './views/App.vue';
 import Login from './views/login.vue';
 import UserConfig from './views/sys/user/userList.vue';
 import TreeConfig from './views/sys/org/orgList.vue';
+import RoleConfig from './views/sys/role/roleList.vue';
 Vue.use(Router);
 
 export default new Router({
@@ -14,6 +15,10 @@ export default new Router({
     children: [{
         path: 'userConfig',
         component: UserConfig
+      },
+      {
+        path: 'roleConfig',
+        component: RoleConfig
       },
       {
         path: 'treeConfig',
