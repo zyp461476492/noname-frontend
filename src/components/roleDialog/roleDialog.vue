@@ -96,7 +96,7 @@
           roleType: "",
           userType: "user",
           dataScope: "default",
-          status: 1,
+          status: "1",
           remarks: "",
           org: {}
         },
@@ -163,7 +163,7 @@
           roleType: "管理员",
           userType: "普通用户",
           dataScope: "default",
-          status: 1,
+          status: "1",
           remarks: "备注",
           org: {}
         };

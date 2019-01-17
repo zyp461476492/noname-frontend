@@ -85,7 +85,7 @@
               :current-page="currentPage"
               :page-sizes="pageSizes"
               :page-size="pageSize"
-              layout="total, size, prev, pager, next jumper"
+              layout="total, sizes, prev, pager, next, jumper"
               :total="totalCount"
               class="page"></el-pagination>
         </el-row>
@@ -142,9 +142,9 @@
             href: "系统设置"
           },
           {
-            name: "用户管理",
+            name: "角色管理",
             disable: false,
-            href: "用户管理"
+            href: "角色管理"
           }
         ]
       };
