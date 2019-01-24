@@ -175,6 +175,8 @@ export default {
     initPara() {
       // 初始化参数
       this.$refs["form"].resetFields();
+      // 清除 rootNode flag
+      this.rootNode = false;
       // 清除parent的值
       this.form = {
         parent: {},
