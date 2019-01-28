@@ -55,11 +55,11 @@
 </template>
 <script>
 import { isEmptyObject } from "@/plugins/common.js";
-import orgTree from "@/components/orgTree/orgTree.vue";
+import treeDialog from "@/components/orgTree/treeDialog.vue";
 export default {
   name: "orgCard",
   components: {
-    "m-org-tree": orgTree
+    "m-org-tree": treeDialog
   },
   props: {
     root: {

@@ -39,7 +39,7 @@
   </el-dialog>
 </template>
 <script>
-import { notifyMsg } from "@/plugins/common.js";
+import { notifyMsg, isEmptyObject } from "@/plugins/common.js";
 import orgInput from "@/components/orgInput/orgInput.vue";
 import iconPicker from "@/components/iconPicker/iconPicker.vue";
 export default {
@@ -48,7 +48,6 @@ export default {
     orgInput: orgInput,
     iconPicker: iconPicker
   },
-  mounted() {},
   watch: {
     type() {
       if (this.type === "add") {
@@ -228,8 +227,13 @@ export default {
             let userInfo = response.data.data;
             this.form.loginId = userInfo.loginId;
             this.form.name = userInfo.name;
-            this.form.org = userInfo.org;
-            this.$refs.orgInput.changeOrgName(userInfo.org.name);
+            // 设置选择框的值
+            if (!isEmptyObject(userInfo.org)) {
+              this.form.org = userInfo.org;
+              this.$refs.orgInput.changeOrgName(userInfo.org.name);
+            } else {
+              this.form.org = {};
+            }
             this.form.phone = userInfo.phone;
             this.form.email = userInfo.email;
             this.form.identifyCard = userInfo.identifyCard;

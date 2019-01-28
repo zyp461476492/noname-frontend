@@ -13,19 +13,20 @@
   </div>
 </template>
 <script>
-import orgTree from "@/components/orgTree/orgTree.vue";
+import treeDialog from "@/components/orgTree/treeDialog.vue";
 export default {
   name: "orgInput",
   props: {},
   components: {
-    "m-org-tree": orgTree
+    "m-org-tree": treeDialog
   },
-  mounted() {
+  created() {
     this.queryTreeRoot();
   },
   data() {
     return {
       parentName: "",
+      treeData: [],
       dialogFlag: false
     };
   },
