@@ -8,7 +8,7 @@
         <el-input v-model="form.name" autocomplete="off"></el-input>
       </el-form-item>
       <el-form-item label="所属公司" :label-width="formLabelWidth">
-        <org-input ref="orgInput"  v-on:tree-select="orgTreeSelect"/>
+        <org-input ref="orgInput" v-on:tree-select="orgTreeSelect"/>
       </el-form-item>
       <el-form-item label="邮箱" :label-width="formLabelWidth" prop="email">
         <el-input v-model="form.email" autocomplete="off"></el-input>
@@ -28,6 +28,9 @@
           <el-option label="女" value="1"></el-option>
         </el-select>
       </el-form-item>
+      <el-form-item label="图标" :label-width="formLabelWidth">
+        <icon-picker/>
+      </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
       <el-button @click="closeDialog()">取 消</el-button>
@@ -38,10 +41,12 @@
 <script>
 import { notifyMsg } from "@/plugins/common.js";
 import orgInput from "@/components/orgInput/orgInput.vue";
+import iconPicker from "@/components/iconPicker/iconPicker.vue";
 export default {
   name: "userDialog",
   components: {
-    orgInput: orgInput
+    orgInput: orgInput,
+    iconPicker: iconPicker
   },
   mounted() {},
   watch: {
@@ -128,6 +133,7 @@ export default {
       }
     };
     return {
+      test: false,
       formLabelWidth: "120px",
       dialogFormVisible: false,
       form: {

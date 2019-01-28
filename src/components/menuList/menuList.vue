@@ -1,5 +1,6 @@
 <template>
   <el-menu :router="true" class="side-div" @open="handleOpen" @close="handleClose">
+
     <template v-for="(item, index) in itemList">
       <el-submenu :index="item.url" v-if="item.children.length > 0" :key="index.index">
         <template slot="title">
@@ -14,6 +15,7 @@
 </template>
 <script>
 import treeMenu from "@/components/menuList/treeMenu.vue";
+
 export default {
   name: "menuList",
   props: {

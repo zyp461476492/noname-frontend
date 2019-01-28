@@ -43,6 +43,7 @@
       ref="orgTreeDialog"
       :dialog="dialogFlag"
       :appendToBody="true"
+      :treeData="treeData"
       v-on:tree-submit="orgTreeSubmit"
     ></m-org-tree>
     <div slot="footer" class="dialog-footer">
@@ -92,6 +93,9 @@ export default {
       required: false
     }
   },
+  mounted() {
+    this.queryTreeRoot();
+  },
   data() {
     return {
       formLabelWidth: "120px",
@@ -100,6 +104,7 @@ export default {
       formDisabled: false,
       parentName: "",
       rootNode: false,
+      treeData: [],
       form: {
         parent: {},
         code: "",
@@ -170,6 +175,8 @@ export default {
         });
     },
     openOrgTree() {
+      // 查询树节点
+      this.queryTreeRoot();
       this.dialogFlag = !this.dialogFlag;
     },
     initPara() {
@@ -277,6 +284,28 @@ export default {
           this.$notifyMsg(
             this.$message,
             "组织机构信息更新失败-网络请求失败:" + error,
+            "error"
+          );
+        });
+    },
+    queryTreeRoot() {
+      let url = "/api/sys/org/tree/root";
+      let method = "get";
+      let data = {};
+      let params = {};
+      this.$getDataByApi(url, method, data, params)
+        .then(response => {
+          let resCode = response.data.code;
+          if (resCode === 0) {
+            this.treeData = response.data.data;
+          } else {
+            this.$notifyMsg(this.$message, "没有查询到数据", "warning");
+          }
+        })
+        .catch(error => {
+          this.$notifyMsg(
+            this.$message,
+            "查询组织机构信息失败-网络请求失败:" + error,
             "error"
           );
         });
