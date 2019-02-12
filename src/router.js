@@ -4,6 +4,7 @@ import App from './views/App.vue';
 import Login from './views/login.vue';
 import UserConfig from './views/sys/user/userList.vue';
 import TreeConfig from './views/sys/org/orgList.vue';
+import MenuConfig from './views/sys/menu/menuView.vue';
 Vue.use(Router);
 
 export default new Router({
@@ -18,6 +19,10 @@ export default new Router({
       {
         path: 'treeConfig',
         component: TreeConfig
+      },
+      {
+        path: 'menuConfig',
+        component: MenuConfig
       }
     ]
   }, {

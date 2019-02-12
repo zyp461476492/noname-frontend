@@ -9,11 +9,16 @@ import {
   getDataByApi
 } from "@/plugins/ajax.js";
 import {
-  notifyMsg
+  notifyMsg,
+  ajaxSuccess,
+  now
 } from "@/plugins/common.js";
+import "./assets/iconfont/iconfont.css";
 
 // 注入ajax
 Vue.prototype.$getDataByApi = getDataByApi;
+Vue.prototype.$ajaxSuccess = ajaxSuccess;
+Vue.prototype.$now = now;
 // 注入全局通知方法
 Vue.prototype.$notifyMsg = notifyMsg;
 Vue.prototype.$axios = axios;
