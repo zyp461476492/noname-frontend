@@ -17,3 +17,7 @@ export function ajaxSuccess(response) {
     let code = response.data.code;
     return code === 0;
 }
+
+export function now() {
+    return new Date().getTime();
+}
