@@ -19,6 +19,10 @@ export default {
     };
   },
   methods: {
+    iconChange(icon) {
+      this.text = "";
+      this.iconClass = icon;
+    },
     btnClick() {
       this.visable = true;
     },
