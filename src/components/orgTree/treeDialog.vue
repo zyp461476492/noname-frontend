@@ -15,7 +15,7 @@
 </template>
 <script>
 import treeView from "@/components/treeView/treeView.vue";
-import {isEmptyObject } from "@/plugins/common.js";
+import { isEmptyObject } from "@/plugins/common.js";
 export default {
   components: {
     "m-treeview": treeView

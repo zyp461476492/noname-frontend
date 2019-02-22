@@ -25,13 +25,12 @@ export default {
     },
     queryMenuList() {
       let url = "/api/sys/menu/root";
-      this.$getDataByApi(url, "GET")
-        .then(response => {
-          let code = response.data.code;
-          if (code === 0) {
-            this.itemList = response.data.data;
-          } 
-        })
+      this.$getDataByApi(url, "GET").then(response => {
+        let code = response.data.code;
+        if (code === 0) {
+          this.itemList = response.data.data;
+        }
+      });
     }
   }
 };
