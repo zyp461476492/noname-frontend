@@ -141,17 +141,9 @@ export default {
             // 更新menu-input的菜单树
             this.$refs.menuInput.queryMenuList();
             this.closeWin();
-          } else {
-            this.$notifyMsg(this.$message, "删除失败", "warning");
-          }
+          } 
         })
-        .catch(error => {
-          this.$notifyMsg(
-            this.$message,
-            "组织机构删除失败-网络请求失败:" + error,
-            "error"
-          );
-        });
+        
     },
     queryMenuInfo() {
       let url = "/api/sys/menu/query/" + this.id;

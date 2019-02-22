@@ -241,18 +241,9 @@ export default {
             this.form.order = userInfo.order;
             this.form.status = userInfo.status;
             this.form.createDate = userInfo.createDate;
-          } else {
-            // 失败
-            notifyMsg(this.$message, "查询用户信息失败", "warning");
           }
         })
-        .catch(error => {
-          notifyMsg(
-            this.$message,
-            "查询用户信息-网络请求失败:" + error,
-            "error"
-          );
-        });
+        
     },
     getDataFromApi(url, method, data) {
       return this.$axios({
@@ -277,18 +268,8 @@ export default {
             notifyMsg(this.$message, "更新用户信息成功", "success");
             this.dialogFormVisible = false;
             this.initFormData();
-          } else {
-            // 失败
-            notifyMsg(this.$message, "更新用户信息失败", "warning");
           }
         })
-        .catch(error => {
-          notifyMsg(
-            this.$message,
-            "更新用户信息-网络请求失败:" + error,
-            "error"
-          );
-        });
     },
     ajaxAddUser() {
       let url = "/api/sys/user/add/";
@@ -301,18 +282,8 @@ export default {
             notifyMsg(this.$message, "添加用户信息成功", "success");
             this.dialogFormVisible = false;
             this.initFormData();
-          } else {
-            // 失败
-            notifyMsg(this.$message, "添加用户信息失败", "warning");
-          }
+          } 
         })
-        .catch(error => {
-          notifyMsg(
-            this.$message,
-            "添加用户信息-网络请求失败:" + error,
-            "error"
-          );
-        });
     },
     checkLoginId(name) {
       // 后台检查用户名

@@ -107,17 +107,9 @@ export default {
           let resCode = response.data.code;
           if (resCode === 0) {
             this.treeData = response.data.data;
-          } else {
-            this.$notifyMsg(this.$message, "没有查询到数据", "warning");
-          }
+          } 
         })
-        .catch(error => {
-          this.$notifyMsg(
-            this.$message,
-            "查询组织机构信息失败-网络请求失败:" + error,
-            "error"
-          );
-        });
+       
     }
   }
 };

@@ -96,13 +96,9 @@ export default {
             for (let i = 0; i < this.iconType.length; i++) {
               this.queryIconList(this.iconType[i].type);
             }
-          } else {
-            this.$notifyMsg(this.$message, "查询图标类别失败", "warning");
-          }
+          } 
         })
-        .catch(error => {
-          this.$notifyMsg(this.$message, "查询图标类别异常" + error, "error");
-        });
+      
     },
     queryIconList(type) {
       let url = "/api/sys/icon/list";

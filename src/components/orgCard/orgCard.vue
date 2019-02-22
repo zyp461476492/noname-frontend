@@ -247,18 +247,9 @@ export default {
             // 通知父组件需要强制更新
             this.$emit("tree-change");
             this.dialogFormVisible = false;
-          } else {
-            // 失败
-            this.$notifyMsg(this.$message, "组织机构添加失败", "warning");
-          }
+          } 
         })
-        .catch(error => {
-          this.$notifyMsg(
-            this.$message,
-            "组织机构添加失败-网络请求失败:" + error,
-            "error"
-          );
-        });
+        
     },
     updateOrg() {
       let url = "/api/sys/org/tree/update";
@@ -275,18 +266,9 @@ export default {
             // 通知父组件需要强制更新
             this.$emit("tree-change");
             this.dialogFormVisible = false;
-          } else {
-            // 失败
-            this.$notifyMsg(this.$message, "组织机构信息更新失败", "warning");
-          }
+          } 
         })
-        .catch(error => {
-          this.$notifyMsg(
-            this.$message,
-            "组织机构信息更新失败-网络请求失败:" + error,
-            "error"
-          );
-        });
+      
     },
     queryTreeRoot() {
       let url = "/api/sys/org/tree/root";
@@ -298,17 +280,9 @@ export default {
           let resCode = response.data.code;
           if (resCode === 0) {
             this.treeData = response.data.data;
-          } else {
-            this.$notifyMsg(this.$message, "没有查询到数据", "warning");
-          }
+          } 
         })
-        .catch(error => {
-          this.$notifyMsg(
-            this.$message,
-            "查询组织机构信息失败-网络请求失败:" + error,
-            "error"
-          );
-        });
+       
     },
     orgTreeSubmit(data) {
       this.parentName = data.name;

@@ -196,13 +196,9 @@ export default {
           if (code === 0) {
             this.getDataFromApi();
             notifyMsg(this.$message, "删除成功", "success");
-          } else {
-            notifyMsg(this.$message, "删除失败", "error");
-          }
+          } 
         })
-        .catch(error => {
-          notifyMsg(this.$message, "删除失败" + error, "error");
-        });
+       
     },
     checkUser() {
       this.openUserDialog("用户信息");
@@ -237,10 +233,7 @@ export default {
           }
           this.totalCount = response.data.data.totalElements;
         })
-        .catch(error => {
-          this.loading = false;
-          notifyMsg(this.$message, "查询请求失败, error:" + error, "error");
-        });
+       
     }
   }
 };
