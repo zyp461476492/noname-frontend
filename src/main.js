@@ -9,7 +9,6 @@ import {
   getDataByApi
 } from "@/plugins/ajax.js";
 import {
-  notifyMsg,
   ajaxSuccess,
   now,
   msg
@@ -87,7 +86,7 @@ Vue.prototype.$getDataByApi = getDataByApi;
 Vue.prototype.$ajaxSuccess = ajaxSuccess;
 Vue.prototype.$now = now;
 // 注入全局通知方法
-Vue.prototype.$notifyMsg = notifyMsg;
+Vue.prototype.$msg = msg;
 Vue.prototype.$axios = axios;
 Vue.config.productionTip = false
 

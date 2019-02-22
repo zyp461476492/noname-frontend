@@ -48,7 +48,7 @@ export default {
                 this.$router.push({ path: "/main" });
               } else {
                 this.loading = false;
-                this.$notifyMsg(this.$message, "用户名或密码错误", "error");
+                this.$msg("用户名或密码错误", "error");
               }
             })
         } else {

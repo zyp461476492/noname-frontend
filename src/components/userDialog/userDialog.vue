@@ -39,7 +39,7 @@
   </el-dialog>
 </template>
 <script>
-import { notifyMsg, isEmptyObject } from "@/plugins/common.js";
+import {isEmptyObject } from "@/plugins/common.js";
 import orgInput from "@/components/orgInput/orgInput.vue";
 import iconPicker from "@/components/iconPicker/iconPicker.vue";
 export default {
@@ -265,7 +265,7 @@ export default {
           if (resCode === 0) {
             // 成功
             this.notifyParent();
-            notifyMsg(this.$message, "更新用户信息成功", "success");
+            this.$msg("更新用户信息成功", "success");
             this.dialogFormVisible = false;
             this.initFormData();
           }
@@ -279,7 +279,7 @@ export default {
           if (resCode === 0) {
             // 成功
             this.notifyParent();
-            notifyMsg(this.$message, "添加用户信息成功", "success");
+            this.$msg("添加用户信息成功", "success");
             this.dialogFormVisible = false;
             this.initFormData();
           } 
