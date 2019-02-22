@@ -135,23 +135,15 @@ export default {
         .then(response => {
           let resCode = response.data.code;
           if (resCode === 0) {
-            this.$notifyMsg(this.$message, "删除成功", "success");
+            this.$msg("删除成功", "success");
             // 关闭弹窗
             this.$emit("tree-change");
             // 更新menu-input的菜单树
             this.$refs.menuInput.queryMenuList();
             this.closeWin();
-          } else {
-            this.$notifyMsg(this.$message, "删除失败", "warning");
-          }
+          } 
         })
-        .catch(error => {
-          this.$notifyMsg(
-            this.$message,
-            "组织机构删除失败-网络请求失败:" + error,
-            "error"
-          );
-        });
+        
     },
     queryMenuInfo() {
       let url = "/api/sys/menu/query/" + this.id;
@@ -175,17 +167,8 @@ export default {
             }
             this.form.order = data.order;
             this.form.createDate = data.createDate;
-          } else {
-            this.$notifyMsg(this.$message, "查询菜单信息失败", "warning");
-          }
+          } 
         })
-        .catch(error => {
-          this.$notifyMsg(
-            this.$message,
-            "查询菜单信息失败-网络请求失败:" + error,
-            "error"
-          );
-        });
     },
     addMenu() {
       let url = "/api/sys/menu/add/";
@@ -193,7 +176,7 @@ export default {
         .then(response => {
           if (this.$ajaxSuccess(response)) {
             // 成功
-            this.$notifyMsg(this.$message, "菜单添加成功", "success");
+            this.$msg("菜单添加成功", "success");
             // 通知父组件需要强制更新
             this.$emit("tree-change");
             // 更新menu-input的菜单树
@@ -201,18 +184,8 @@ export default {
             // 重置menu-input的值
             this.$refs.menuInput.changeMenuName("");
             this.closeWin();
-          } else {
-            // 失败
-            this.$notifyMsg(this.$message, "菜单添加失败", "warning");
-          }
+          } 
         })
-        .catch(error => {
-          this.$notifyMsg(
-            this.$message,
-            "菜单添加失败-网络请求失败:" + error,
-            "error"
-          );
-        });
     },
     updateMenu() {
       let url = "/api/sys/menu/update/";
@@ -225,24 +198,15 @@ export default {
         .then(response => {
           if (this.$ajaxSuccess(response)) {
             // 成功
-            this.$notifyMsg(this.$message, "菜单信息更新成功", "success");
+            this.$msg("菜单信息更新成功", "success");
             // 通知父组件需要强制更新
             this.$emit("tree-change");
             // 更新menu-input的菜单树
             this.$refs.menuInput.queryMenuList();
             this.closeWin();
-          } else {
-            // 失败
-            this.$notifyMsg(this.$message, "菜单信息更新失败", "warning");
-          }
+          } 
         })
-        .catch(error => {
-          this.$notifyMsg(
-            this.$message,
-            "菜单信息更新失败-网络请求失败:" + error,
-            "error"
-          );
-        });
+
     },
     formSubmit(formName) {
       let parentEmptyFlag = isEmptyObject(this.form.parent);
@@ -250,12 +214,12 @@ export default {
       this.$refs[formName].validate(valid => {
         if (valid) {
           if (parentEmptyFlag && !this.isRoot) {
-            this.$notifyMsg(this.$message, "请选择父菜单", "warning");
+            this.$msg( "请选择父菜单", "warning");
           } else {
             let sameParentFlag = this.form.parent.id === this.id;
             if (sameParentFlag && !this.isRoot) {
               // 如果不是根节点，并且选择了和自己一样的组织机构，非法
-              this.$notifyMsg(this.$message, "请选择正确的父菜单", "warning");
+              this.$msg( "请选择正确的父菜单", "warning");
             } else {
               if (this.type === "add") {
                 this.addMenu();

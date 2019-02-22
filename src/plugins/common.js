@@ -1,9 +1,13 @@
-export function notifyMsg(message, text, type) {
-    message({
+import { Message } from 'element-ui';
+
+export function msg(text, type) {
+    Message.closeAll();
+    Message({
         message: text,
         type: type
     })
 }
+
 
 export function isEmptyObject(obj) {
     var name;

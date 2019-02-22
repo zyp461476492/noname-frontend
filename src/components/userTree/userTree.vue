@@ -85,13 +85,8 @@ export default {
           let code = response.data.code;
           if (code === 0) {
             this.userList = response.data.data;
-          } else {
-            this.$notifyMsg(this.$message, "查询失败", "warning");
           }
         })
-        .catch(error => {
-          this.$notifyMsg(this.$message, "查询失败" + error, "error");
-        });
     },
     queryTreeRoot() {
       let url = "/api/sys/org/tree/root";
@@ -103,17 +98,9 @@ export default {
           let resCode = response.data.code;
           if (resCode === 0) {
             this.treeData = response.data.data;
-          } else {
-            this.$notifyMsg(this.$message, "没有查询到数据", "warning");
           }
         })
-        .catch(error => {
-          this.$notifyMsg(
-            this.$message,
-            "查询组织机构信息失败-网络请求失败:" + error,
-            "error"
-          );
-        });
+      
     }
   },
   watch: {

@@ -49,22 +49,12 @@ export default {
       let method = "get";
       let data = {};
       let params = {};
-      this.$getDataByApi(url, method, data, params)
-        .then(response => {
-          let resCode = response.data.code;
-          if (resCode === 0) {
-            this.treeData = response.data.data;
-          } else {
-            this.$notifyMsg(this.$message, "没有查询到数据", "warning");
-          }
-        })
-        .catch(error => {
-          this.$notifyMsg(
-            this.$message,
-            "查询组织机构信息失败-网络请求失败:" + error,
-            "error"
-          );
-        });
+      this.$getDataByApi(url, method, data, params).then(response => {
+        let resCode = response.data.code;
+        if (resCode === 0) {
+          this.treeData = response.data.data;
+        }
+      });
     }
   }
 };

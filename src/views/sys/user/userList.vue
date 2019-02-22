@@ -99,7 +99,6 @@
 // @ 是vue自动生成时设置 /src目录的别名
 import breadcrumbs from "@/components/breadcrumbs/breadcrumbs.vue";
 import userDialog from "@/components/userDialog/userDialog.vue";
-import { notifyMsg } from "@/plugins/common.js";
 
 export default {
   components: {
@@ -195,14 +194,10 @@ export default {
           let code = response.data.code;
           if (code === 0) {
             this.getDataFromApi();
-            notifyMsg(this.$message, "删除成功", "success");
-          } else {
-            notifyMsg(this.$message, "删除失败", "error");
-          }
+            this.$msg("删除成功", "success");
+          } 
         })
-        .catch(error => {
-          notifyMsg(this.$message, "删除失败" + error, "error");
-        });
+       
     },
     checkUser() {
       this.openUserDialog("用户信息");
@@ -237,10 +232,7 @@ export default {
           }
           this.totalCount = response.data.data.totalElements;
         })
-        .catch(error => {
-          this.loading = false;
-          notifyMsg(this.$message, "查询请求失败, error:" + error, "error");
-        });
+       
     }
   }
 };

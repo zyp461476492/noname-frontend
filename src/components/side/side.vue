@@ -25,18 +25,12 @@ export default {
     },
     queryMenuList() {
       let url = "/api/sys/menu/root";
-      this.$getDataByApi(url, "GET")
-        .then(response => {
-          let code = response.data.code;
-          if (code === 0) {
-            this.itemList = response.data.data;
-          } else {
-            this.$notifyMsg(this.$message, "查询菜单数据失败", "warning");
-          }
-        })
-        .catch(error => {
-          this.$notifyMsg(this.$message, "查询菜单数据异常" + error, "error");
-        });
+      this.$getDataByApi(url, "GET").then(response => {
+        let code = response.data.code;
+        if (code === 0) {
+          this.itemList = response.data.data;
+        }
+      });
     }
   }
 };

@@ -15,7 +15,7 @@
 </template>
 <script>
 import treeView from "@/components/treeView/treeView.vue";
-import { notifyMsg, isEmptyObject } from "@/plugins/common.js";
+import { isEmptyObject } from "@/plugins/common.js";
 export default {
   components: {
     "m-treeview": treeView
@@ -59,7 +59,7 @@ export default {
     },
     treeSubmit() {
       if (isEmptyObject(this.selected)) {
-        notifyMsg(this.$message, "请选择一个节点", "warning");
+        this.$msg("请选择一个节点", "warning");
       } else {
         // 确定时，传递出选择的树节点
         this.$emit("tree-submit", this.selected);

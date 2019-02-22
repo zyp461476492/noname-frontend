@@ -159,15 +159,15 @@ export default {
         .then(response => {
           let resCode = response.data.code;
           if (resCode === 0) {
-            this.$notifyMsg(this.$message, "删除成功", "success");
+            this.$msg(this.$message, "删除成功", "success");
             // 关闭弹窗
             this.dialogFormVisible = false;
           } else {
-            this.$notifyMsg(this.$message, "删除失败", "warning");
+            this.$msg(this.$message, "删除失败", "warning");
           }
         })
         .catch(error => {
-          this.$notifyMsg(
+          this.$msg(
             this.$message,
             "组织机构删除失败-网络请求失败:" + error,
             "error"
@@ -225,11 +225,11 @@ export default {
             this.form.createDate = data.createDate;
             this.rootNode = data.root;
           } else {
-            this.$notifyMsg(this.$message, "查询组织机构信息失败", "warning");
+            this.$msg(this.$message, "查询组织机构信息失败", "warning");
           }
         })
         .catch(error => {
-          this.$notifyMsg(
+          this.$msg(
             this.$message,
             "查询组织机构信息失败-网络请求失败:" + error,
             "error"
@@ -238,27 +238,16 @@ export default {
     },
     appendOrgList() {
       let url = "/api/sys/org/tree/add";
-      this.$getDataByApi(url, "post", this.form)
-        .then(response => {
-          let resCode = response.data.code;
-          if (resCode === 0) {
-            // 成功
-            this.$notifyMsg(this.$message, "组织机构添加成功", "success");
-            // 通知父组件需要强制更新
-            this.$emit("tree-change");
-            this.dialogFormVisible = false;
-          } else {
-            // 失败
-            this.$notifyMsg(this.$message, "组织机构添加失败", "warning");
-          }
-        })
-        .catch(error => {
-          this.$notifyMsg(
-            this.$message,
-            "组织机构添加失败-网络请求失败:" + error,
-            "error"
-          );
-        });
+      this.$getDataByApi(url, "post", this.form).then(response => {
+        let resCode = response.data.code;
+        if (resCode === 0) {
+          // 成功
+          this.$msg("组织机构添加成功", "success");
+          // 通知父组件需要强制更新
+          this.$emit("tree-change");
+          this.dialogFormVisible = false;
+        }
+      });
     },
     updateOrg() {
       let url = "/api/sys/org/tree/update";
@@ -266,49 +255,28 @@ export default {
         data: this.form,
         updateBy: 0
       };
-      this.$getDataByApi(url, "post", reqData)
-        .then(response => {
-          let resCode = response.data.code;
-          if (resCode === 0) {
-            // 成功
-            this.$notifyMsg(this.$message, "组织机构信息更新成功", "success");
-            // 通知父组件需要强制更新
-            this.$emit("tree-change");
-            this.dialogFormVisible = false;
-          } else {
-            // 失败
-            this.$notifyMsg(this.$message, "组织机构信息更新失败", "warning");
-          }
-        })
-        .catch(error => {
-          this.$notifyMsg(
-            this.$message,
-            "组织机构信息更新失败-网络请求失败:" + error,
-            "error"
-          );
-        });
+      this.$getDataByApi(url, "post", reqData).then(response => {
+        let resCode = response.data.code;
+        if (resCode === 0) {
+          // 成功
+          this.$msg("组织机构信息更新成功", "success");
+          // 通知父组件需要强制更新
+          this.$emit("tree-change");
+          this.dialogFormVisible = false;
+        }
+      });
     },
     queryTreeRoot() {
       let url = "/api/sys/org/tree/root";
       let method = "get";
       let data = {};
       let params = {};
-      this.$getDataByApi(url, method, data, params)
-        .then(response => {
-          let resCode = response.data.code;
-          if (resCode === 0) {
-            this.treeData = response.data.data;
-          } else {
-            this.$notifyMsg(this.$message, "没有查询到数据", "warning");
-          }
-        })
-        .catch(error => {
-          this.$notifyMsg(
-            this.$message,
-            "查询组织机构信息失败-网络请求失败:" + error,
-            "error"
-          );
-        });
+      this.$getDataByApi(url, method, data, params).then(response => {
+        let resCode = response.data.code;
+        if (resCode === 0) {
+          this.treeData = response.data.data;
+        }
+      });
     },
     orgTreeSubmit(data) {
       this.parentName = data.name;
@@ -320,16 +288,12 @@ export default {
       this.$refs[formName].validate(valid => {
         if (valid) {
           if (parentEmptyFlag && !this.isRoot) {
-            this.$notifyMsg(this.$message, "请选择父组织机构", "warning");
+            this.$msg("请选择父组织机构", "warning");
           } else {
             let sameParentFlag = this.form.parent.id === this.id;
             if (sameParentFlag && !this.isRoot) {
               // 如果不是根节点，并且选择了和自己一样的组织机构，非法
-              this.$notifyMsg(
-                this.$message,
-                "请选择正确的父组织机构",
-                "warning"
-              );
+              this.$msg("请选择正确的父组织机构", "warning");
             } else {
               if (this.type === "add") {
                 this.appendOrgList();

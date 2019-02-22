@@ -84,13 +84,9 @@ export default {
           let code = response.data.code;
           if (code === 0) {
             this.treeData = response.data.data;
-          } else {
-            this.$notifyMsg(this.$message, "查询菜单数据失败", "warning");
-          }
+          } 
         })
-        .catch(error => {
-          this.$notifyMsg(this.$message, "查询菜单数据异常" + error, "error");
-        });
+       
     }
   }
 };
