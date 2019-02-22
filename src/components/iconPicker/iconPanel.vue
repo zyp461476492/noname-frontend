@@ -66,7 +66,7 @@ export default {
         this.selectItem = "";
         this.closeWin();
       } else {
-        this.$notifyMsg(this.$message, "请选择一个图标", "warning");
+        this.$msg(this.$message, "请选择一个图标", "warning");
       }
     },
     reset() {
@@ -107,17 +107,9 @@ export default {
         .then(response => {
           if (this.$ajaxSuccess(response)) {
             this.iconList[type] = response.data.data;
-          } else {
-            this.$notifyMsg(
-              this.$message,
-              "查询图标类别为" + type + "的图标失败",
-              "warning"
-            );
           }
         })
-        .catch(error => {
-          this.$notifyMsg(this.$message, "查询图标异常" + error, "error");
-        });
+        
     }
   },
   filters: {
