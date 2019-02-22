@@ -8,7 +8,7 @@
         <el-input v-model="form.name" autocomplete="off"></el-input>
       </el-form-item>
       <el-form-item label="所属公司" :label-width="formLabelWidth">
-        <org-input ref="orgInput"  v-on:tree-select="orgTreeSelect"/>
+        <org-input ref="orgInput" v-on:tree-select="orgTreeSelect"/>
       </el-form-item>
       <el-form-item label="邮箱" :label-width="formLabelWidth" prop="email">
         <el-input v-model="form.email" autocomplete="off"></el-input>
@@ -28,6 +28,9 @@
           <el-option label="女" value="1"></el-option>
         </el-select>
       </el-form-item>
+      <el-form-item label="图标" :label-width="formLabelWidth">
+        <icon-picker/>
+      </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
       <el-button @click="closeDialog()">取 消</el-button>
@@ -36,14 +39,15 @@
   </el-dialog>
 </template>
 <script>
-import { notifyMsg } from "@/plugins/common.js";
+import {isEmptyObject } from "@/plugins/common.js";
 import orgInput from "@/components/orgInput/orgInput.vue";
+import iconPicker from "@/components/iconPicker/iconPicker.vue";
 export default {
   name: "userDialog",
   components: {
-    orgInput: orgInput
+    orgInput: orgInput,
+    iconPicker: iconPicker
   },
-  mounted() {},
   watch: {
     type() {
       if (this.type === "add") {
@@ -128,6 +132,7 @@ export default {
       }
     };
     return {
+      test: false,
       formLabelWidth: "120px",
       dialogFormVisible: false,
       form: {
@@ -222,8 +227,13 @@ export default {
             let userInfo = response.data.data;
             this.form.loginId = userInfo.loginId;
             this.form.name = userInfo.name;
-            this.form.org = userInfo.org;
-            this.$refs.orgInput.changeOrgName(userInfo.org.name);
+            // 设置选择框的值
+            if (!isEmptyObject(userInfo.org)) {
+              this.form.org = userInfo.org;
+              this.$refs.orgInput.changeOrgName(userInfo.org.name);
+            } else {
+              this.form.org = {};
+            }
             this.form.phone = userInfo.phone;
             this.form.email = userInfo.email;
             this.form.identifyCard = userInfo.identifyCard;
@@ -231,18 +241,9 @@ export default {
             this.form.order = userInfo.order;
             this.form.status = userInfo.status;
             this.form.createDate = userInfo.createDate;
-          } else {
-            // 失败
-            notifyMsg(this.$message, "查询用户信息失败", "warning");
           }
         })
-        .catch(error => {
-          notifyMsg(
-            this.$message,
-            "查询用户信息-网络请求失败:" + error,
-            "error"
-          );
-        });
+        
     },
     getDataFromApi(url, method, data) {
       return this.$axios({
@@ -264,21 +265,11 @@ export default {
           if (resCode === 0) {
             // 成功
             this.notifyParent();
-            notifyMsg(this.$message, "更新用户信息成功", "success");
+            this.$msg("更新用户信息成功", "success");
             this.dialogFormVisible = false;
             this.initFormData();
-          } else {
-            // 失败
-            notifyMsg(this.$message, "更新用户信息失败", "warning");
           }
         })
-        .catch(error => {
-          notifyMsg(
-            this.$message,
-            "更新用户信息-网络请求失败:" + error,
-            "error"
-          );
-        });
     },
     ajaxAddUser() {
       let url = "/api/sys/user/add/";
@@ -288,21 +279,11 @@ export default {
           if (resCode === 0) {
             // 成功
             this.notifyParent();
-            notifyMsg(this.$message, "添加用户信息成功", "success");
+            this.$msg("添加用户信息成功", "success");
             this.dialogFormVisible = false;
             this.initFormData();
-          } else {
-            // 失败
-            notifyMsg(this.$message, "添加用户信息失败", "warning");
-          }
+          } 
         })
-        .catch(error => {
-          notifyMsg(
-            this.$message,
-            "添加用户信息-网络请求失败:" + error,
-            "error"
-          );
-        });
     },
     checkLoginId(name) {
       // 后台检查用户名

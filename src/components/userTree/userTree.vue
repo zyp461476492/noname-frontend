@@ -2,7 +2,7 @@
   <el-dialog :title="dialogTitle" :visible.sync="dialogFormVisible">
     <el-row>
       <el-col :span="8">
-        <tree-view ref="treeView" :editable="false" v-on:tree-click="treeClick"></tree-view>
+        <tree-view ref="treeView" :treeData="treeData" v-on:tree-click="treeClick"></tree-view>
       </el-col>
       <el-col :span="14">
         <el-table
@@ -43,24 +43,28 @@ export default {
   components: {
     treeView: treeView
   },
+  mounted() {
+    this.queryTreeRoot();
+  },
   data() {
     return {
       dialogFormVisible: false,
       userList: [],
+      treeData: [],
       chooseUser: {}
     };
   },
   methods: {
     initData() {
-        this.userList = [];
-        this.chooseUser = {};
+      this.userList = [];
+      this.chooseUser = {};
     },
     submit() {
       if (isEmptyObject(this.chooseUser)) {
         this.$alert("请选择一个用户");
       } else {
-          this.$emit("user", this.chooseUser);
-          this.dialogFormVisible = false;
+        this.$emit("user", this.chooseUser);
+        this.dialogFormVisible = false;
       }
     },
     closeDialog() {
@@ -81,13 +85,22 @@ export default {
           let code = response.data.code;
           if (code === 0) {
             this.userList = response.data.data;
-          } else {
-            this.$notifyMsg(this.$message, "查询失败", "warning");
           }
         })
-        .catch(error => {
-          this.$notifyMsg(this.$message, "查询失败" + error, "error");
-        });
+    },
+    queryTreeRoot() {
+      let url = "/api/sys/org/tree/root";
+      let method = "get";
+      let data = {};
+      let params = {};
+      this.$getDataByApi(url, method, data, params)
+        .then(response => {
+          let resCode = response.data.code;
+          if (resCode === 0) {
+            this.treeData = response.data.data;
+          }
+        })
+      
     }
   },
   watch: {

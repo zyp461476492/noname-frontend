@@ -1,29 +1,36 @@
 <template>
-  <el-menu
-    default-active="2"
-    :router="true"
-    class="side-div"
-    @open="handleOpen"
-    @close="handleClose"
-  >
-    <el-menu-item index="/main/userConfig">
-      <i class="el-icon-menu"></i>
-      <span slot="title">用户管理</span>
-    </el-menu-item>
-    <el-menu-item index="/main/treeConfig">
-      <i class="el-icon-menu"></i>
-      <span slot="title">组织机构管理</span>
-    </el-menu-item>
-  </el-menu>
+  <menu-list :itemList="itemList"></menu-list>
 </template>
 <script>
+import menuList from "@/components/menuList/menuList.vue";
 export default {
+  name: "side",
+  components: {
+    menuList: menuList
+  },
+  created() {
+    this.queryMenuList();
+  },
+  data() {
+    return {
+      itemList: []
+    };
+  },
   methods: {
     handleOpen(key, keyPath) {
       console.log(key, keyPath);
     },
     handleClose(key, keyPath) {
       console.log(key, keyPath);
+    },
+    queryMenuList() {
+      let url = "/api/sys/menu/root";
+      this.$getDataByApi(url, "GET").then(response => {
+        let code = response.data.code;
+        if (code === 0) {
+          this.itemList = response.data.data;
+        }
+      });
     }
   }
 };

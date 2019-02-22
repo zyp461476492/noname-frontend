@@ -6,7 +6,7 @@
     center
     :append-to-body="appendToBody"
   >
-    <m-treeview ref="subTreeView" v-on:tree-click="treeSelect"></m-treeview>
+    <m-treeview ref="subTreeView" :treeData="treeData" v-on:tree-click="treeSelect"></m-treeview>
     <div slot="footer" class="dialog-footer">
       <el-button @click="dialogFormVisible = false">取 消</el-button>
       <el-button type="primary" @click="treeSubmit">确 定</el-button>
@@ -15,7 +15,7 @@
 </template>
 <script>
 import treeView from "@/components/treeView/treeView.vue";
-import { notifyMsg, isEmptyObject } from "@/plugins/common.js";
+import { isEmptyObject } from "@/plugins/common.js";
 export default {
   components: {
     "m-treeview": treeView
@@ -31,6 +31,9 @@ export default {
     dialogTitle: {
       type: String,
       default: "组织机构树"
+    },
+    treeData: {
+      type: Array
     }
   },
   data() {
@@ -48,7 +51,7 @@ export default {
   methods: {
     treeRefresh() {
       // 更新子树
-      this.$refs.subTreeView.queryTreeRoot();
+      this.queryTreeRoot();
     },
     treeSelect(data) {
       // 树节点选择
@@ -56,7 +59,7 @@ export default {
     },
     treeSubmit() {
       if (isEmptyObject(this.selected)) {
-        notifyMsg(this.$message, "请选择一个组织机构", "warning");
+        this.$msg("请选择一个节点", "warning");
       } else {
         // 确定时，传递出选择的树节点
         this.$emit("tree-submit", this.selected);
