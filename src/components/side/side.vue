@@ -17,12 +17,6 @@ export default {
     };
   },
   methods: {
-    handleOpen(key, keyPath) {
-      console.log(key, keyPath);
-    },
-    handleClose(key, keyPath) {
-      console.log(key, keyPath);
-    },
     queryMenuList() {
       let url = "/api/sys/menu/root";
       this.$getDataByApi(url, "GET").then(response => {

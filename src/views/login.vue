@@ -52,6 +52,7 @@ export default {
               }
             })
         } else {
+          this.$msg("请填写正确的信息", "warning");
           return false;
         }
       });
