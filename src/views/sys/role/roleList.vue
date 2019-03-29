@@ -12,13 +12,13 @@
           <el-button style="float: right; padding: 3px 0" type="text" @click="addRole()">添加角色</el-button>
         </div>
         <role-dialog
-            :id="dialogId"
-            :dialog="dialog"
-            :dialogTitle="dialogTitle"
-            :dialogReadonly="dialogReadonly"
-            :type="dialogType"
-            v-on:refresh="refresh">
-        </role-dialog>
+          :id="dialogId"
+          :dialog="dialog"
+          :dialogTitle="dialogTitle"
+          :dialogReadonly="dialogReadonly"
+          :type="dialogType"
+          v-on:refresh="refresh"
+        ></role-dialog>
         <el-row>
           <el-col :span="24">
             <el-table :data="roleInfo">
@@ -64,15 +64,15 @@
               <el-table-column fixed="right" label="操作">
                 <template slot-scope="scope">
                   <el-button
-                      @click.native.prevent="deleteRoleConfirm(scope.$index)"
-                      type="text"
-                      size="small">删除
-                  </el-button>
+                    @click.native.prevent="deleteRoleConfirm(scope.$index)"
+                    type="text"
+                    size="small"
+                  >删除</el-button>
                   <el-button
-                      @click.native.prevent="updateRole(scope.$index)"
-                      type="text"
-                      size="small">修改
-                  </el-button>
+                    @click.native.prevent="updateRole(scope.$index)"
+                    type="text"
+                    size="small"
+                  >修改</el-button>
                 </template>
               </el-table-column>
             </el-table>
@@ -80,14 +80,15 @@
         </el-row>
         <el-row>
           <el-pagination
-              @size-change="handleSizeChange"
-              @current-change="handleCurrentChange"
-              :current-page="currentPage"
-              :page-sizes="pageSizes"
-              :page-size="pageSize"
-              layout="total, sizes, prev, pager, next, jumper"
-              :total="totalCount"
-              class="page"></el-pagination>
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :current-page="currentPage"
+            :page-sizes="pageSizes"
+            :page-size="pageSize"
+            layout="total, sizes, prev, pager, next, jumper"
+            :total="totalCount"
+            class="page"
+          ></el-pagination>
         </el-row>
       </el-card>
     </el-col>
@@ -96,183 +97,169 @@
 
 
 <script>
-  import roleDialog from "@/components/roleDialog/roleDialog.vue";
-  import breadcrumbs from "@/components/breadcrumbs/breadcrumbs.vue";
-  import {notifyMsg} from "@/plugins/common.js";
+import roleDialog from "@/components/roleDialog/roleDialog.vue";
+import breadcrumbs from "@/components/breadcrumbs/breadcrumbs.vue";
 
-
-  export default {
-    components: {
-      roleDialog: roleDialog,
-      "m-breadcrumbs": breadcrumbs
-    },
-    watch: {
-      pagination: {
-        handler() {
-          this.getDataFromApi();
+export default {
+  components: {
+    roleDialog: roleDialog,
+    "m-breadcrumbs": breadcrumbs
+  },
+  watch: {
+    pagination: {
+      handler() {
+        this.getDataFromApi();
+      },
+      deep: true
+    }
+  },
+  mounted: function() {
+    this.getDataFromApi();
+  },
+  data() {
+    return {
+      snackbar: false,
+      snackbarColor: "info",
+      snackbarTimeout: 1500,
+      alertMsg: "",
+      selected: [],
+      dialogTitle: "角色管理",
+      dialogReadonly: false,
+      dialog: false,
+      dialogId: -1,
+      dialogType: "add",
+      totalCount: 0,
+      pageSizes: [10, 20, 30, 40],
+      pageSize: 10,
+      currentPage: 1,
+      loading: false,
+      roleInfo: [],
+      breadcrumbsInfo: [
+        {
+          name: "系统设置",
+          disable: true,
+          href: "系统设置"
         },
-        deep: true
-      }
-    },
-    mounted: function() {
+        {
+          name: "角色管理",
+          disable: false,
+          href: "角色管理"
+        }
+      ]
+    };
+  },
+  methods: {
+    refresh() {
       this.getDataFromApi();
     },
-    data() {
-      return {
-        snackbar: false,
-        snackbarColor: "info",
-        snackbarTimeout: 1500,
-        alertMsg: "",
-        selected: [],
-        dialogTitle: "角色管理",
-        dialogReadonly: false,
-        dialog: false,
-        dialogId: -1,
-        dialogType: "add",
-        totalCount: 0,
-        pageSizes: [10, 20, 30, 40],
-        pageSize: 10,
-        currentPage: 1,
-        loading: false,
-        roleInfo: [],
-        breadcrumbsInfo: [
-          {
-            name: "系统设置",
-            disable: true,
-            href: "系统设置"
-          },
-          {
-            name: "角色管理",
-            disable: false,
-            href: "角色管理"
-          }
-        ]
-      };
+    openRoleDialog(title) {
+      this.dialogTitle = title;
+      this.dialog = !this.dialog;
     },
-    methods: {
-      refresh() {
-        this.getDataFromApi();
-      },
-      openRoleDialog(title) {
-        this.dialogTitle = title;
-        this.dialog = !this.dialog;
-      },
-      addRole() {
-        this.dialogId = -1;
-        this.dialogType = "add";
-        this.dialogReadonly = false;
-        this.openRoleDialog("添加角色");
-      },
-      updateRole(index) {
-        this.dialogReadonly = false;
-        let id = this.RoleInfo[index].id;
-        this.dialogType = "update";
-        this.dialogId = id;
-        this.openRoleDialog("编辑角色信息");
-      },
-      deleteRole(index) {
-        let url = "/api/sys/role/del/";
-        url += this.roleInfo[index].id;
-        this.$axios
-          .delete(url)
-          .then(response => {
-            this.selected = [];
-            let code = response.data.code;
-            if (code === 0) {
-              this.getDataFromApi();
-              notifyMsg(this.$message, "删除成功", "success");
-            } else {
-              notifyMsg(this.$message, "删除失败", "error");
-            }
-          })
-          .catch(error => {
-            notifyMsg(this.$message, "删除失败" + error, "error");
-          });
-      },
-      deleteRoleConfirm(index) {
-        this.$msgbox
-          .confirm("将永久删除此角色,是否继续?", "提示", {
-            confirmButtonText: "确定",
-            cancelButtonText: "取消",
-            type: "warning"
-          })
-          .then(() => {
-            this.deleteRole(index);
-          })
-          .catch(() => {
-
-          });
-      },
-      handleSizeChange(val) {
-        this.pageSize = val;
-        this.getDataFromApi();
-      },
-      handleCurrentChange(val) {
-        this.currentPage = val;
-        this.getDataFromApi();
-      },
-      getDataFromApi() {
-        this.loading = true;
-        this.$axios({
-          methods: "get",
-          url: "/api/sys/role/list/",
-          params: {
-            limit: this.pageSize,
-            offset: this.currentPage - 1
-          }
+    addRole() {
+      this.dialogId = -1;
+      this.dialogType = "add";
+      this.dialogReadonly = false;
+      this.openRoleDialog("添加角色");
+    },
+    updateRole(index) {
+      this.dialogReadonly = false;
+      let id = this.RoleInfo[index].id;
+      this.dialogType = "update";
+      this.dialogId = id;
+      this.openRoleDialog("编辑角色信息");
+    },
+    deleteRole(index) {
+      let url = "/api/sys/role/del/";
+      url += this.roleInfo[index].id;
+      this.$axios.delete(url).then(response => {
+        this.selected = [];
+        let code = response.data.code;
+        if (code === 0) {
+          this.getDataFromApi();
+          this.$msg("删除成功", "success");
+        } else {
+          this.$msg("删除失败", "error");
+        }
+      });
+    },
+    deleteRoleConfirm(index) {
+      this.$msgbox
+        .confirm("将永久删除此角色,是否继续?", "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
         })
-          .then(response => {
-            this.loading = false;
-            let isEmpty = response.data.data.empty;
-            this.selected = [];
-            if (isEmpty) {
-              console.log("empty");
-            } else {
-              this.roleInfo = response.data.data.content;
-            }
-            this.totalCount = response.data.data.totalElements;
-          })
-          .catch(error => {
-            this.loading = false;
-            notifyMsg(this.$message, "查询角色-请求失败,error:" + error, "error");
-          });
-      }
+        .then(() => {
+          this.deleteRole(index);
+        })
+        .catch(() => {});
+    },
+    handleSizeChange(val) {
+      this.pageSize = val;
+      this.getDataFromApi();
+    },
+    handleCurrentChange(val) {
+      this.currentPage = val;
+      this.getDataFromApi();
+    },
+    getDataFromApi() {
+      this.loading = true;
+      let url = "/api/sys/role/list/";
+      let method = "GET";
+      let data = {};
+      let params = {
+        limit: this.pageSize,
+        offset: this.currentPage - 1
+      };
+      this.$getDataByApi(url, method, data, params).then(response => {
+        this.loading = false;
+        let isEmpty = response.data.data.empty;
+        this.selected = [];
+        if (isEmpty) {
+          console.log("empty");
+        } else {
+          this.roleInfo = response.data.data.content;
+        }
+        this.totalCount = response.data.data.totalElements;
+      });
     }
   }
+};
 </script>
 
 <style>
-  .breadcrumb {
-    margin-bottom: 10px;
-  }
+.breadcrumb {
+  margin-bottom: 10px;
+}
 
-  .clearfix:before,
-  .clearfix:after {
-    display: table;
-    content: "";
-  }
+.clearfix:before,
+.clearfix:after {
+  display: table;
+  content: "";
+}
 
-  .clearfix:after {
-    clear: both;
-  }
+.clearfix:after {
+  clear: both;
+}
 
-  .page {
-    margin-top: 10px;
-    float: right;
-  }
+.page {
+  margin-top: 10px;
+  float: right;
+}
 
-  .demo-table-expand {
-    font-size: 0;
-  }
+.demo-table-expand {
+  font-size: 0;
+}
 
-  .demo-table-expand label {
-    width: 90px;
-    color: #99a9bf;
-  }
+.demo-table-expand label {
+  width: 90px;
+  color: #99a9bf;
+}
 
-  .demo-table-expand .el-form-item {
-    margin-right: 0;
-    margin-bottom: 0;
-    width: 30%;
-  }
+.demo-table-expand .el-form-item {
+  margin-right: 0;
+  margin-bottom: 0;
+  width: 30%;
+}
 </style>

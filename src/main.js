@@ -10,6 +10,7 @@ import {
 } from "@/plugins/ajax.js";
 import {
   ajaxSuccess,
+  isEmptyObject,
   now,
   msg
 } from "@/plugins/common.js";
@@ -77,7 +78,8 @@ axios.interceptors.response.use(
       // 请求发生异常时，有可能是后台服务异常，此时不需要回退至登录页面
       msg("数据请求发生异常，请稍后重试", "error");
     }
-    return Promise.reject(error.response.data); // 返回接口返回的错误信息
+    // 返回接口返回的错误信息
+    return Promise.reject(error.response.data); 
   });
 
 
@@ -85,6 +87,7 @@ axios.interceptors.response.use(
 Vue.prototype.$getDataByApi = getDataByApi;
 Vue.prototype.$ajaxSuccess = ajaxSuccess;
 Vue.prototype.$now = now;
+Vue.prototype.$isEmptyObject = isEmptyObject;
 // 注入全局通知方法
 Vue.prototype.$msg = msg;
 Vue.prototype.$axios = axios;
