@@ -13,7 +13,7 @@
         </div>
         <role-dialog
           :id="dialogId"
-          :dialog="dialog"
+          :visable.sync="visable"
           :dialogTitle="dialogTitle"
           :dialogReadonly="dialogReadonly"
           :type="dialogType"
@@ -55,7 +55,7 @@
                   </el-form>
                 </template>
               </el-table-column>
-              <el-table-column prop="name" label="角色名"></el-table-column>
+              <el-table-column prop="roleName" label="角色名"></el-table-column>
               <el-table-column prop="roleCode" label="角色代码"></el-table-column>
               <el-table-column prop="roleType" label="角色类型"></el-table-column>
               <el-table-column prop="status" label="角色权限"></el-table-column>
@@ -64,12 +64,12 @@
               <el-table-column fixed="right" label="操作">
                 <template slot-scope="scope">
                   <el-button
-                    @click.native.prevent="deleteRoleConfirm(scope.$index)"
+                    @click="deleteRoleConfirm(scope.row.id)"
                     type="text"
                     size="small"
                   >删除</el-button>
                   <el-button
-                    @click.native.prevent="updateRole(scope.$index)"
+                    @click="updateRole(scope.row.id)"
                     type="text"
                     size="small"
                   >修改</el-button>
@@ -125,7 +125,7 @@ export default {
       selected: [],
       dialogTitle: "角色管理",
       dialogReadonly: false,
-      dialog: false,
+      visable: false,
       dialogId: -1,
       dialogType: "add",
       totalCount: 0,
@@ -154,7 +154,7 @@ export default {
     },
     openRoleDialog(title) {
       this.dialogTitle = title;
-      this.dialog = !this.dialog;
+      this.visable = !this.visable;
     },
     addRole() {
       this.dialogId = -1;
@@ -162,25 +162,24 @@ export default {
       this.dialogReadonly = false;
       this.openRoleDialog("添加角色");
     },
-    updateRole(index) {
+    updateRole(id) {
       this.dialogReadonly = false;
-      let id = this.RoleInfo[index].id;
       this.dialogType = "update";
       this.dialogId = id;
       this.openRoleDialog("编辑角色信息");
     },
     deleteRole(index) {
       let url = "/api/sys/role/del/";
-      url += this.roleInfo[index].id;
+      url += index;
       this.$axios.delete(url).then(response => {
         this.selected = [];
         let code = response.data.code;
         if (code === 0) {
-          this.getDataFromApi();
           this.$msg("删除成功", "success");
         } else {
           this.$msg("删除失败", "error");
         }
+        this.getDataFromApi();
       });
     },
     deleteRoleConfirm(index) {
@@ -217,7 +216,7 @@ export default {
         let isEmpty = response.data.data.empty;
         this.selected = [];
         if (isEmpty) {
-          console.log("empty");
+          this.roleInfo = [];
         } else {
           this.roleInfo = response.data.data.content;
         }
