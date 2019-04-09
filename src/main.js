@@ -5,15 +5,8 @@ import "./plugins/filter";
 import "./plugins/element";
 import "./plugins/common";
 import RouterVue from './views/router.vue';
-import {
-  getDataByApi
-} from "@/plugins/ajax.js";
-import {
-  ajaxSuccess,
-  isEmptyObject,
-  now,
-  msg
-} from "@/plugins/common.js";
+import {getDataByApi} from "@/plugins/ajax.js";
+import {ajaxSuccess, isEmptyObject, msg, now} from "@/plugins/common.js";
 import "./assets/iconfont/iconfont.css";
 
 // JWT 用户权限校验，判断 TOKEN 是否在 localStorage 当中
@@ -21,7 +14,8 @@ router.beforeEach(({
   name
 }, from, next) => {
   // 获取 JWT Token
-  if (sessionStorage.getItem('JWT_TOKEN')) {
+  console.log(localStorage.getItem('JWT_TOKEN'));
+  if (localStorage.getItem('JWT_TOKEN')) {
     // 如果用户在Login页面
     if (name === 'Login') {
       next({
@@ -45,8 +39,8 @@ router.beforeEach(({
 // http request 拦截器
 axios.interceptors.request.use(
   config => {
-    if (sessionStorage.JWT_TOKEN) { // 判断是否存在token，如果存在的话，则每个http header都加上token
-      config.headers.user_token = `${sessionStorage.JWT_TOKEN}`;
+    if (localStorage.JWT_TOKEN) { // 判断是否存在token，如果存在的话，则每个http header都加上token
+      config.headers.user_token = `${localStorage.JWT_TOKEN}`;
     }
     return config;
   },
@@ -61,7 +55,7 @@ axios.interceptors.response.use(
       case 1:
         // 认证失败，此时要退回登录，清除数据
         msg("登录信息已过期", "error");
-        sessionStorage.removeItem('JWT_TOKEN');
+        localStorage.removeItem('JWT_TOKEN');
         router.replace({
           path: '/login'
         });

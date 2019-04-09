@@ -1,5 +1,5 @@
 <template>
-  <div class="login-container">
+    <div @keyup.enter="login" class="login-container">
     <el-card>
       <div slot="header" class="login-header">
         <span>用户登录</span>
@@ -44,7 +44,7 @@ export default {
                 // 登录成功，保存token至sessionStorage中
                 // 跳转至主页
                 this.loading = false;
-                sessionStorage["JWT_TOKEN"] = response.data.data;
+                  localStorage["JWT_TOKEN"] = response.data.data;
                 this.$router.push({ path: "/main" });
               } else {
                 this.loading = false;
