@@ -39,10 +39,11 @@
   </el-dialog>
 </template>
 <script>
-import {isEmptyObject } from "@/plugins/common.js";
-import orgInput from "@/components/orgInput/orgInput.vue";
-import iconPicker from "@/components/iconPicker/iconPicker.vue";
-export default {
+  import {isEmptyObject} from "@/plugins/common.js";
+  import orgInput from "@/components/orgInput/orgInput.vue";
+  import iconPicker from "@/components/iconPicker/iconPicker.vue";
+
+  export default {
   name: "userDialog",
   components: {
     orgInput: orgInput,
@@ -58,7 +59,7 @@ export default {
       this.dialogFormVisible = true;
     },
     id() {
-      if (this.id != -1) {
+      if (this.id !== -1) {
         // 查询用户信息
         this.queryUserInfo();
       } else {
@@ -179,16 +180,17 @@ export default {
   },
   computed: {
     updateFlag() {
-      if (this.id != -1) {
-        return true;
-      }
-      return false;
+      return this.id !== -1;
     }
   },
   methods: {
     orgTreeSelect(id) {
-      // 组织机构树被选择
-      this.form.org.id = id;
+      if (id === undefined) {
+        this.form.org = {};
+      } else {
+        // 组织机构树被选择
+        this.form.org.id = id;
+      }
     },
     initFormData() {
       this.form = {

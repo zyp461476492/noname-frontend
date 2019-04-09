@@ -4,17 +4,18 @@
       <el-button slot="append" @click="openMenuTree()">选择</el-button>
     </el-input>
     <tree-dialog
-      ref="orgTreeDialog"
-      :dialog="dialogFlag"
-      :appendToBody="true"
-      :treeData="treeData"
-      v-on:tree-submit="menuTreeSubmit"
+            ref="orgTreeDialog"
+            :visable.sync="dialogFlag"
+            :appendToBody="true"
+            :treeData="treeData"
+            v-on:tree-submit="menuTreeSubmit"
     ></tree-dialog>
   </div>
 </template>
 <script>
-import treeDialog from "@/components/orgTree/treeDialog.vue";
-export default {
+    import treeDialog from "@/components/orgTree/treeDialog.vue";
+
+    export default {
   name: "menuInput",
   components: {
     "tree-dialog": treeDialog
@@ -48,13 +49,20 @@ export default {
        
     },
     menuTreeSubmit(item) {
-      this.parentName = item.name;
-      // 抛出事件，传递选择的ID
-      this.$emit("tree-select", item.id);
-      // 提交后，重新查询一遍树节点
-      this.queryMenuList();
+        if (item === undefined) {
+            this.parentName = '根菜单';
+        } else {
+            this.parentName = item.name;
+            // 抛出事件，传递选择的ID
+            this.$emit("tree-select", item.id);
+        }
+
     }
-  }
+  },
+        updated() {
+            // 更新时，查询菜单树
+            this.queryMenuList();
+        }
 };
 </script>
 <style scoped>

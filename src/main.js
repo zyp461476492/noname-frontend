@@ -5,8 +5,8 @@ import "./plugins/filter";
 import "./plugins/element";
 import "./plugins/common";
 import RouterVue from './views/router.vue';
-import {getDataByApi} from "@/plugins/ajax.js";
-import {ajaxSuccess, isEmptyObject, msg, now} from "@/plugins/common.js";
+import {getDataByApi} from "./plugins/ajax.js";
+import {ajaxSuccess, isEmptyObject, msg, now} from "./plugins/common.js";
 import "./assets/iconfont/iconfont.css";
 
 // JWT 用户权限校验，判断 TOKEN 是否在 localStorage 当中

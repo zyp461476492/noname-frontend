@@ -13,16 +13,14 @@
             <el-form-item label="角色类型" :label-width="formLabelWidth" prop="roleType">
                 <el-input v-model="form.roleType" auto-complete="off"></el-input>
             </el-form-item>
-            <el-form-item label="用户类型" :label-width="formLabelWidth" prop="userType">
-                <el-input v-model="form.userType" auto-complete="off"></el-input>
-            </el-form-item>
-            <el-form-item label="角色权限" :label-width="formLabelWidth" prop="dataScope">
-                <el-input v-model="form.dataScope" auto-complete="off"></el-input>
-            </el-form-item>
             <el-form-item label="角色状态" :label-width="formLabelWidth" prop="status">
                 <el-select v-model="form.status" placeholder="角色状态">
-                    <el-option label="启用" value="1"></el-option>
-                    <el-option label="禁用" value="0"></el-option>
+                    <el-option
+                            :key="item.key"
+                            :label="item.label"
+                            :value="item.value"
+                            v-for="item in statusOptionList">
+                    </el-option>
                 </el-select>
             </el-form-item>
             <el-tag>标签一</el-tag>
@@ -90,13 +88,20 @@
             return {
                 formLabelWidth: "120px",
                 dialogFormVisible: false,
+                statusOptionList: [{
+                    key: 0,
+                    value: '0',
+                    label: '禁用'
+                }, {
+                    key: 1,
+                    value: '1',
+                    label: '启用'
+                }],
                 form: {
                     roleCode: "",
                     roleName: "",
                     roleType: "",
-                    userType: "user",
-                    dataScope: 1,
-                    status: 1,
+                    status: '1',
                     remarks: ""
                 },
                 rules: {
@@ -111,10 +116,6 @@
                     roleType: [
                         {required: true, message: "请选择角色类别", trigger: "blur"}
                     ],
-                    userType: [
-                        {required: true, message: "请选择用户类别", trigger: "blur"}
-                    ],
-                    dataScope: [],
                     status: [
                         {required: true, message: "请选择角色状态", trigger: "blur"}
                     ],
@@ -138,12 +139,8 @@
                         this.form.roleCode = roleInfo.roleCode;
                         this.form.roleName = roleInfo.roleName;
                         this.form.roleType = roleInfo.roleType;
-                        this.form.userType = roleInfo.userType;
-                        this.form.dataScope = roleInfo.dataScope;
                         this.form.status = roleInfo.status;
                         this.form.remarks = roleInfo.remarks;
-                        this.form.org = roleInfo.org;
-                        // this.$refs.orgInput.changeOrgName(roleInfo.org.name);
                     } else {
                         this.closeWin();
                         this.$msg("查询角色失败", "warning");
@@ -155,9 +152,7 @@
                     roleCode: "",
                     roleName: "",
                     roleType: "",
-                    userType: "",
-                    dataScope: 1,
-                    status: 1,
+                    status: "0",
                     remarks: "备注"
                 };
             },

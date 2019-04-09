@@ -1,10 +1,10 @@
 <template>
   <el-dialog
-    :title="dialogTitle"
-    :visible.sync="dialogFormVisible"
-    :before-close="beforeClose"
-    width="30%"
-    center
+          :title="dialogTitle"
+          :visible.sync="visable"
+          :before-close="beforeClose"
+          width="30%"
+          center
   >
     <el-form
       :model="form"
@@ -40,11 +40,11 @@
     </el-form>
     <input type="hidden" v-model="form.parent">
     <m-org-tree
-      ref="orgTreeDialog"
-      :dialog="dialogFlag"
-      :appendToBody="true"
-      :treeData="treeData"
-      v-on:tree-submit="orgTreeSubmit"
+            ref="orgTreeDialog"
+            :visable.sync="dialogFlag"
+            :appendToBody="true"
+            :treeData="treeData"
+            v-on:tree-submit="orgTreeSubmit"
     ></m-org-tree>
     <div slot="footer" class="dialog-footer">
       <el-button @click="closeWin()">取 消</el-button>
@@ -54,9 +54,10 @@
   </el-dialog>
 </template>
 <script>
-import { isEmptyObject } from "@/plugins/common.js";
-import treeDialog from "@/components/orgTree/treeDialog.vue";
-export default {
+  import {isEmptyObject} from "@/plugins/common.js";
+  import treeDialog from "@/components/orgTree/treeDialog.vue";
+
+  export default {
   name: "orgCard",
   components: {
     "m-org-tree": treeDialog
@@ -71,6 +72,10 @@ export default {
     },
     type: {
       type: String
+    },
+    visable: {
+      type: Boolean,
+      default: false
     },
     dialog: {
       type: Boolean,
@@ -99,7 +104,6 @@ export default {
   data() {
     return {
       formLabelWidth: "120px",
-      dialogFormVisible: false,
       dialogFlag: false,
       formDisabled: false,
       parentName: "",
@@ -161,7 +165,7 @@ export default {
           if (resCode === 0) {
             this.$msg(this.$message, "删除成功", "success");
             // 关闭弹窗
-            this.dialogFormVisible = false;
+            this.closeWin();
           } else {
             this.$msg(this.$message, "删除失败", "warning");
           }
@@ -196,11 +200,12 @@ export default {
       };
       this.parentName = "";
     },
-    beforeClose(done) {
-      done();
+    beforeClose() {
+      this.closeWin();
     },
     closeWin() {
-      this.dialogFormVisible = false;
+      // 子组件通过事件来修改父组件的值，父组件简化为sync
+      this.$emit("update:visable", false);
     },
     queryOrgInfo() {
       let url = "/api/sys/org/tree/query/" + this.id;
@@ -245,7 +250,7 @@ export default {
           this.$msg("组织机构添加成功", "success");
           // 通知父组件需要强制更新
           this.$emit("tree-change");
-          this.dialogFormVisible = false;
+          this.closeWin();
         }
       });
     },
@@ -262,7 +267,7 @@ export default {
           this.$msg("组织机构信息更新成功", "success");
           // 通知父组件需要强制更新
           this.$emit("tree-change");
-          this.dialogFormVisible = false;
+          this.closeWin();
         }
       });
     },
@@ -279,27 +284,28 @@ export default {
       });
     },
     orgTreeSubmit(data) {
-      this.parentName = data.name;
-      this.form.parent.id = data.id;
+      if (data === undefined) {
+        // 未选择，默认设置选择了根节点
+        this.parentName = "根节点";
+        this.form.parent = {};
+      } else {
+        this.parentName = data.name;
+        this.form.parent.id = data.id;
+      }
     },
     formSubmit(formName) {
-      let parentEmptyFlag = isEmptyObject(this.form.parent);
       // 提交
       this.$refs[formName].validate(valid => {
         if (valid) {
-          if (parentEmptyFlag && !this.isRoot) {
-            this.$msg("请选择父组织机构", "warning");
+          let sameParentFlag = this.form.parent.id === this.id;
+          if (sameParentFlag && !this.isRoot) {
+            // 如果不是根节点，并且选择了和自己一样的组织机构，非法
+            this.$msg("请选择正确的父组织机构", "warning");
           } else {
-            let sameParentFlag = this.form.parent.id === this.id;
-            if (sameParentFlag && !this.isRoot) {
-              // 如果不是根节点，并且选择了和自己一样的组织机构，非法
-              this.$msg("请选择正确的父组织机构", "warning");
+            if (this.type === "add") {
+              this.appendOrgList();
             } else {
-              if (this.type === "add") {
-                this.appendOrgList();
-              } else {
-                this.updateOrg();
-              }
+              this.updateOrg();
             }
           }
         } else {
@@ -310,7 +316,7 @@ export default {
   },
   computed: {
     isRoot() {
-      return this.root || this.rootNode;
+      return this.form.parent === {};
     },
     editable() {
       return this.type !== "add";
@@ -324,9 +330,6 @@ export default {
       } else if (this.type === "add") {
         this.initPara();
       }
-    },
-    dialog() {
-      this.dialogFormVisible = true;
     }
   },
   updated() {}
