@@ -14,7 +14,6 @@ router.beforeEach(({
   name
 }, from, next) => {
   // 获取 JWT Token
-  console.log(localStorage.getItem('JWT_TOKEN'));
   if (localStorage.getItem('JWT_TOKEN')) {
     // 如果用户在Login页面
     if (name === 'Login') {
@@ -70,7 +69,7 @@ axios.interceptors.response.use(
   error => {
     if (error.response) {
       // 请求发生异常时，有可能是后台服务异常，此时不需要回退至登录页面
-      msg("数据请求发生异常，请稍后重试", "error");
+        msg("网络异常，请稍后重试", "error");
     }
     // 返回接口返回的错误信息
     return Promise.reject(error.response.data); 

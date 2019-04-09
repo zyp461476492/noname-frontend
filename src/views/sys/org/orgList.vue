@@ -18,6 +18,7 @@
                 :dialogTitle="dialogTitle"
                 :timeStamp="timeStamp"
                 :type="cardType"
+                v-on:close="queryTreeRoot"
         ></org-card>
         <m-tree-view ref="treeView" :treeData="treeData" v-on:tree-click="treeClick"></m-tree-view>
       </el-card>
@@ -57,17 +58,12 @@
           disabled: false,
           href: "组织机构管理"
         }
-      ],
-      snackbar: false,
-      snackbarColor: "info",
-      snackbarTimeout: 1500,
-      alertMsg: ""
+      ]
     };
   },
   methods: {
     treeClick(data) {
-      console.log(data);
-      this.openOrgCard(data.id, "update");
+      this.openOrgCard(data.id, 'update');
     },
     refresh() {
       // 刷新子树
@@ -80,10 +76,7 @@
       this.visable = !this.visable;
     },
     addOrg() {
-      this.dialogId = -1;
-      this.cardType = "add";
-      this.timeStamp = new Date().getTime();
-      this.visable = !this.visable;
+      this.openOrgCard(-1, 'add');
     },
     queryTreeRoot() {
       let url = "/api/sys/org/tree/root";

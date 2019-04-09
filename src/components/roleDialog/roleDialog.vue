@@ -40,9 +40,6 @@
     export default {
         name: "roleDialog",
         updated() {
-            // 根据是否
-            console.log("dialog updated");
-            console.log(this.id);
             if (!this.visable) {
                 // 如果操作类型不是编辑，则清空数据
                 if (this.type !== "update") {
