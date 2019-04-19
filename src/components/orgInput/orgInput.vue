@@ -13,9 +13,9 @@
   </div>
 </template>
 <script>
-  import treeDialog from "@/components/orgTree/treeDialog.vue";
+    import treeDialog from "@/components/orgTree/treeDialog.vue";
 
-  export default {
+    export default {
   name: "orgInput",
   props: {},
   components: {
@@ -63,10 +63,7 @@
         }
       });
     }
-  },
-    updated() {
-      this.queryTreeRoot();
-    }
+  }
 };
 </script>
 <style scoped>

@@ -23,11 +23,11 @@
                     </el-option>
                 </el-select>
             </el-form-item>
-            <el-tag>标签一</el-tag>
-            <el-tag type="success">标签二</el-tag>
-            <el-tag type="info">标签三</el-tag>
-            <el-tag type="warning">标签四</el-tag>
-            <el-tag type="danger">标签五</el-tag>
+            <el-form-item :label-width="formLabelWidth" label="角色权限">
+                <el-col :span="24">
+                    <authorization ref="authPanel" v-on:updateAuthList="setAuthList"/>
+                </el-col>
+            </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
             <el-button type="primary" @click="submitForm('form')">确 定</el-button>
@@ -37,8 +37,11 @@
 </template>
 
 <script>
+    import Authorization from "../authorizationPanel/authorization";
+
     export default {
         name: "roleDialog",
+        components: {Authorization},
         updated() {
             if (!this.visable) {
                 // 如果操作类型不是编辑，则清空数据
@@ -99,7 +102,8 @@
                     roleName: "",
                     roleType: "",
                     status: '1',
-                    remarks: ""
+                    remarks: "",
+                    menuList: []
                 },
                 rules: {
                     roleCode: [
@@ -138,6 +142,8 @@
                         this.form.roleType = roleInfo.roleType;
                         this.form.status = roleInfo.status;
                         this.form.remarks = roleInfo.remarks;
+                        this.form.menuList = roleInfo.menuList;
+                        this.setAuthList();
                     } else {
                         this.closeWin();
                         this.$msg("查询角色失败", "warning");
@@ -150,7 +156,8 @@
                     roleName: "",
                     roleType: "",
                     status: "0",
-                    remarks: "备注"
+                    remarks: "备注",
+                    menuList: []
                 };
             },
             notifyParent() {
@@ -158,6 +165,9 @@
             },
             notifyParentTips(tipInfo) {
                 this.$emit("msg-tip", tipInfo);
+            },
+            setAuthList() {
+                this.$refs["authPanel"].setAuthList(this.form.menuList);
             },
             getDataFromApi(url, method, data) {
                 return this.$axios({
@@ -169,9 +179,10 @@
             ajaxUpdateRole() {
                 let url = "/api/sys/role/update/";
                 this.form.id = this.id;
-                var reqObj = {
+                this.form.menuList = this.$refs["authPanel"].getAuthList();
+                let reqObj = {
                     data: this.form,
-                    updataBy: 0
+                    updateBy: 0
                 };
                 this.getDataFromApi(url, "put", reqObj).then(response => {
                     let resCode = response.data.code;
@@ -186,6 +197,8 @@
             },
             ajaxAddRole() {
                 let url = "api/sys/role/add";
+                this.form.menuList = this.$refs["authPanel"].getAuthList();
+                console.log(this.form);
                 this.getDataFromApi(url, "post", this.form).then(response => {
                     let resCode = response.data.code;
                     if (resCode === 0) {

@@ -6,7 +6,7 @@ import "./plugins/element";
 import "./plugins/common";
 import RouterVue from './views/router.vue';
 import {getDataByApi} from "./plugins/ajax.js";
-import {ajaxSuccess, isEmptyObject, msg, now} from "./plugins/common.js";
+import {ajaxSuccess, isEmptyArray, isEmptyObject, msg, now} from "./plugins/common.js";
 import "./assets/iconfont/iconfont.css";
 
 // JWT 用户权限校验，判断 TOKEN 是否在 localStorage 当中
@@ -81,12 +81,13 @@ Vue.prototype.$getDataByApi = getDataByApi;
 Vue.prototype.$ajaxSuccess = ajaxSuccess;
 Vue.prototype.$now = now;
 Vue.prototype.$isEmptyObject = isEmptyObject;
+Vue.prototype.$isEmptyArray = isEmptyArray;
 // 注入全局通知方法
 Vue.prototype.$msg = msg;
 Vue.prototype.$axios = axios;
-Vue.config.productionTip = false
+Vue.config.productionTip = false;
 
 new Vue({
   router,
   render: h => h(RouterVue),
-}).$mount('#app')
+}).$mount('#app');

@@ -1,7 +1,7 @@
 /**
  * 通用方法封装js
  */
-import { Message } from 'element-ui';
+import {Message} from 'element-ui';
 
 /**
  * 弹出element-ui msg 弹窗
@@ -21,11 +21,22 @@ export function msg(text, type) {
  * @param {*} obj 
  */
 export function isEmptyObject(obj) {
-    var name;
+    let name;
     for (name in obj) {
         return false;
     }
     return true;
+}
+
+/**
+ * 判断 array 是否为空
+ * @param array
+ * @return {boolean}
+ */
+export function isEmptyArray(array) {
+    if (array === undefined)
+        return true;
+    return array.length === 0;
 }
 
 /**
