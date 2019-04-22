@@ -1,5 +1,5 @@
 <template>
-    <tree-view :checkFlag="true" :treeData="treeData" ref="subTreeView"></tree-view>
+    <tree-view :checkFlag="true" :expand-all="true" :treeData="treeData" ref="subTreeView"></tree-view>
 </template>
 
 <script>
@@ -8,18 +8,17 @@
     export default {
         name: "authorization",
         components: {treeView},
-        created() {
+        mounted() {
             this.queryMenuList();
         },
         data() {
             return {
-                treeData: [],
-                gutter: 20,
-                dialogFlag: false
-            };
+                treeData: []
+            }
         },
         methods: {
             setAuthList(list) {
+                console.log(list);
                 // 设置选中的节点
                 this.$refs["subTreeView"].setCheckedNodes(list);
             },
@@ -34,25 +33,16 @@
                         let code = response.data.code;
                         if (code === 0) {
                             this.treeData = response.data.data;
+                            // 等待树节点渲染完成，通知父组件重新设置一遍已选中的节点。
                             // 通知父组件，菜单已初始化完毕，请重新设置一遍已配置的authList
                             this.$emit('updateAuthList');
                         }
                     });
-            },
-            menuTreeSubmit(item) {
-                this.gutter = 20;
-                if (item !== undefined) {
-                    let len = item.length;
-                    if (len <= 3) {
-                        this.gutter = 80;
-                    }
-                }
-                this.authList = item;
             }
         }
     }
 </script>
 
-<style scoped>
+<style>
 
 </style>

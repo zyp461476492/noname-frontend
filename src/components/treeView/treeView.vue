@@ -4,14 +4,13 @@
             :expand-on-click-node="false"
             :props="defaultProps"
             :show-checkbox="checkFlag"
+            :default-expand-all="expandAll"
             @node-click="handleNodeClick"
             highlight-current
             node-key="id"
             ref="treeObj"
     >
-    <span class="tree-node" slot-scope="{ node }">
-      <span>{{ node.label }}</span>
-    </span>
+
     </el-tree>
 </template>
 <script type="text/ecmascript-6">
@@ -21,6 +20,10 @@
                 type: Array
             },
             checkFlag: {
+                type: Boolean,
+                default: false
+            },
+            expandAll: {
                 type: Boolean,
                 default: false
             }
@@ -64,5 +67,6 @@
         font-size: 14px;
         padding-right: 8px;
     }
+
 </style>
 

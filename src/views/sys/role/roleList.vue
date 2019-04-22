@@ -25,9 +25,6 @@
               <el-table-column type="expand">
                 <template slot-scope="props">
                   <el-form label-position="left" inline class="demo-table-expand">
-                    <el-form-item label="角色ID">
-                      <span>{{ props.row.id }}</span>
-                    </el-form-item>
                     <el-form-item label="角色代码">
                       <span>{{ props.row.roleCode }}</span>
                     </el-form-item>
@@ -37,20 +34,8 @@
                     <el-form-item label="角色类型">
                       <span>{{ props.row.roleType }}</span>
                     </el-form-item>
-                    <el-form-item label="用户类型">
-                      <span>{{ props.row.userType }}</span>
-                    </el-form-item>
-                    <el-form-item label="角色权限">
-                      <span>{{ props.row.dataScope }}</span>
-                    </el-form-item>
                     <el-form-item label="角色状态">
                       <span>{{ props.row.status }}</span>
-                    </el-form-item>
-                    <el-form-item label="备注">
-                      <span>{{ props.row.remarks }}</span>
-                    </el-form-item>
-                    <el-form-item label="公司">
-                      <span>{{ props.row.org }}</span>
                     </el-form-item>
                   </el-form>
                 </template>
@@ -59,8 +44,6 @@
               <el-table-column prop="roleCode" label="角色代码"></el-table-column>
               <el-table-column prop="roleType" label="角色类型"></el-table-column>
               <el-table-column prop="status" label="角色权限"></el-table-column>
-              <el-table-column prop="remarks" label="备注"></el-table-column>
-              <el-table-column prop="org" label="公司"></el-table-column>
               <el-table-column fixed="right" label="操作">
                 <template slot-scope="scope">
                   <el-button
@@ -97,10 +80,10 @@
 
 
 <script>
-import roleDialog from "@/components/roleDialog/roleDialog.vue";
-import breadcrumbs from "@/components/breadcrumbs/breadcrumbs.vue";
+    import roleDialog from "@/components/roleDialog/roleDialog.vue";
+    import breadcrumbs from "@/components/breadcrumbs/breadcrumbs.vue";
 
-export default {
+    export default {
   components: {
     roleDialog: roleDialog,
     "m-breadcrumbs": breadcrumbs
@@ -259,6 +242,6 @@ export default {
 .demo-table-expand .el-form-item {
   margin-right: 0;
   margin-bottom: 0;
-  width: 30%;
+    width: 20%;
 }
 </style>

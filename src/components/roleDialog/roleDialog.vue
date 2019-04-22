@@ -25,7 +25,7 @@
             </el-form-item>
             <el-form-item :label-width="formLabelWidth" label="角色权限">
                 <el-col :span="24">
-                    <authorization ref="authPanel" v-on:updateAuthList="setAuthList"/>
+                    <authorization ref="authPanel" v-on:updateAuthList="menuInitComplete"/>
                 </el-col>
             </el-form-item>
         </el-form>
@@ -88,6 +88,7 @@
             return {
                 formLabelWidth: "120px",
                 dialogFormVisible: false,
+                treeData: [],
                 statusOptionList: [{
                     key: 0,
                     value: '0',
@@ -165,6 +166,9 @@
             },
             notifyParentTips(tipInfo) {
                 this.$emit("msg-tip", tipInfo);
+            },
+            menuInitComplete() {
+                this.queryRoleInfo();
             },
             setAuthList() {
                 this.$refs["authPanel"].setAuthList(this.form.menuList);
