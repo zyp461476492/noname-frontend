@@ -49,6 +49,8 @@
                                     localStorage["menuList"] = response.data.data.menuList;
                                     console.log(localStorage["JWT_TOKEN"]);
                                     console.log(localStorage["menuList"]);
+
+                                    console.log(this.$buildMenuTree(response.data.data.menuList));
                                     this.$router.push({path: "/main"});
                                 } else {
                                     this.loading = false;
