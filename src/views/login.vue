@@ -46,11 +46,6 @@
                                     // 跳转至主页
                                     this.loading = false;
                                     localStorage["JWT_TOKEN"] = response.data.data.jwt;
-                                    localStorage["menuList"] = response.data.data.menuList;
-                                    console.log(localStorage["JWT_TOKEN"]);
-                                    console.log(localStorage["menuList"]);
-
-                                    console.log(this.$buildMenuTree(response.data.data.menuList));
                                     this.$router.push({path: "/main"});
                                 } else {
                                     this.loading = false;
