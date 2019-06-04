@@ -10,16 +10,15 @@
         <div slot="header" class="clearfix">
           <span>组织机构管理</span>
           <el-button style="float: right; padding: 3px 0" type="text" @click="refresh()">刷新</el-button>
-          <el-button style="float: right; padding: 3px 0" type="text" @click="userTree()">用户树</el-button>
           <el-button style="float: right; padding: 3px 0" type="text" @click="addOrg()">新增</el-button>
         </div>
-        <user-tree :dialogTitle="dialogTitle" :dialog="dialogTest"/>
         <org-card
-          :id="dialogId"
-          :dialog="dialog"
-          :dialogTitle="dialogTitle"
-          :timeStamp="timeStamp"
-          :type="cardType"
+                :id="dialogId"
+                :visable.sync="visable"
+                :dialogTitle="dialogTitle"
+                :timeStamp="timeStamp"
+                :type="cardType"
+                v-on:close="queryTreeRoot"
         ></org-card>
         <m-tree-view ref="treeView" :treeData="treeData" v-on:tree-click="treeClick"></m-tree-view>
       </el-card>
@@ -27,15 +26,14 @@
   </el-row>
 </template>
 <script>
-import breadcrumbs from "@/components/breadcrumbs/breadcrumbs.vue";
-import treeView from "@/components/treeView/treeView.vue";
-import orgCard from "@/components/orgCard/orgCard.vue";
-import userTree from "@/components/userTree/userTree.vue";
-export default {
+  import breadcrumbs from "@/components/breadcrumbs/breadcrumbs.vue";
+  import treeView from "@/components/treeView/treeView.vue";
+  import orgCard from "@/components/orgCard/orgCard.vue";
+
+  export default {
   components: {
     "m-tree-view": treeView,
     "m-breadcrumbs": breadcrumbs,
-    userTree: userTree,
     orgCard: orgCard
   },
   mounted() {
@@ -43,10 +41,9 @@ export default {
   },
   data() {
     return {
+      visable: false,
       dialogId: -1,
-      dialog: false,
       dialogTitle: "组织机构",
-      dialogTest: false,
       cardType: "add",
       timeStamp: 0,
       treeData: [],
@@ -61,20 +58,12 @@ export default {
           disabled: false,
           href: "组织机构管理"
         }
-      ],
-      snackbar: false,
-      snackbarColor: "info",
-      snackbarTimeout: 1500,
-      alertMsg: ""
+      ]
     };
   },
   methods: {
-    userTree() {
-      this.dialogTest = !this.dialogTest;
-    },
     treeClick(data) {
-      console.log(data);
-      this.openOrgCard(data.id, "update");
+      this.openOrgCard(data.id, 'update');
     },
     refresh() {
       // 刷新子树
@@ -84,18 +73,10 @@ export default {
       this.cardType = type;
       this.dialogId = id;
       this.timeStamp = new Date().getTime();
-      this.dialog = !this.dialog;
+      this.visable = !this.visable;
     },
     addOrg() {
-      this.dialogId = -1;
-      this.cardType = "add";
-      this.timeStamp = new Date().getTime();
-      this.dialog = !this.dialog;
-    },
-    tips(text, type) {
-      this.snackbar = !this.snackbar;
-      this.alertMsg = text;
-      this.snackbarColor = type;
+      this.openOrgCard(-1, 'add');
     },
     queryTreeRoot() {
       let url = "/api/sys/org/tree/root";

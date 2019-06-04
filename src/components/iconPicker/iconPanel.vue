@@ -66,7 +66,7 @@ export default {
         this.selectItem = "";
         this.closeWin();
       } else {
-        this.$msg(this.$message, "请选择一个图标", "warning");
+          this.$msg("请选择一个图标", "warning");
       }
     },
     reset() {
