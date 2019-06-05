@@ -15,9 +15,10 @@
 </template>
 
 <script>
-import header from "@/components/header/header.vue";
-import side from "@/components/side/side.vue";
-export default {
+  import header from "../components/header/header.vue";
+  import side from "../components/side/side.vue";
+
+  export default {
   name: "App",
   components: {
     "m-header": header,

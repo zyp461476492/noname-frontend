@@ -70,6 +70,7 @@ axios.interceptors.response.use(
     if (error.response) {
       // 请求发生异常时，有可能是后台服务异常，此时不需要回退至登录页面
         msg("网络异常，请稍后重试", "error");
+      localStorage.removeItem('JWT_TOKEN');
     }
     // 返回接口返回的错误信息
     return Promise.reject(error.response.data); 
