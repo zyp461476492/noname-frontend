@@ -10,71 +10,71 @@ import {ajaxSuccess, buildMenuTree, isEmptyArray, isEmptyObject, msg, now} from 
 import "./assets/iconfont/iconfont.css";
 
 // JWT 用户权限校验，判断 TOKEN 是否在 localStorage 当中
-router.beforeEach(({
-  name
-}, from, next) => {
-  // 获取 JWT Token
-  if (localStorage.getItem('JWT_TOKEN')) {
-    // 如果用户在Login页面
-    if (name === 'Login') {
-      next({
-        name: 'App'
-      });
+router.beforeEach(({name}, from, next) => {
+    // 获取 JWT Token
+    let hasToken = localStorage.hasOwnProperty('JWT_TOKEN');
+    console.log(hasToken);
+    if (hasToken) {
+        // 如果用户在Login页面
+        if (name === 'Login') {
+            next({
+                name: 'App'
+            });
+        } else {
+            next();
+        }
     } else {
-      next();
+        if (name === 'Login') {
+            next();
+        } else {
+            next({
+                name: 'Login'
+            });
+        }
     }
-  } else {
-    if (name === 'Login') {
-      next();
-    } else {
-      next({
-        name: 'Login'
-      });
-    }
-  }
 });
 
 // 配置axios
 // http request 拦截器
 axios.interceptors.request.use(
-  config => {
-    if (localStorage.JWT_TOKEN) { // 判断是否存在token，如果存在的话，则每个http header都加上token
-      config.headers.user_token = `${localStorage.JWT_TOKEN}`;
-    }
-    return config;
-  },
-  err => {
-    return Promise.reject(err);
-  });
+    config => {
+        if (localStorage.JWT_TOKEN) { // 判断是否存在token，如果存在的话，则每个http header都加上token
+            config.headers.user_token = `${localStorage.JWT_TOKEN}`;
+        }
+        return config;
+    },
+    err => {
+        return Promise.reject(err);
+    });
 
 // http response 拦截器
 axios.interceptors.response.use(
-  response => {
-    switch (response.data.code) {
-      case 1:
-        // 认证失败，此时要退回登录，清除数据
-        msg("登录信息已过期", "error");
-        localStorage.removeItem('JWT_TOKEN');
-        router.replace({
-          path: '/login'
-        });
-        break;
-      case 0xFFFF:
-        // 统一提示，数据请求失败
-        msg("数据请求(操作)失败", "error");
-        break;
-    }
-    return response;
-  },
-  error => {
-    if (error.response) {
-      // 请求发生异常时，有可能是后台服务异常，此时不需要回退至登录页面
-        msg("网络异常，请稍后重试", "error");
-      localStorage.removeItem('JWT_TOKEN');
-    }
-    // 返回接口返回的错误信息
-    return Promise.reject(error.response.data); 
-  });
+    response => {
+        switch (response.data.code) {
+            case 1:
+                // 认证失败，此时要退回登录，清除数据
+                msg("登录信息已过期", "error");
+                localStorage.removeItem('JWT_TOKEN');
+                router.replace({
+                    path: '/login'
+                });
+                break;
+            case 0xFFFF:
+                // 统一提示，数据请求失败
+                msg("数据请求(操作)失败", "error");
+                break;
+        }
+        return response;
+    },
+    error => {
+        if (error.response) {
+            // 请求发生异常时，有可能是后台服务异常，此时不需要回退至登录页面
+            msg("网络异常，请稍后重试", "error");
+            localStorage.removeItem('JWT_TOKEN');
+        }
+        // 返回接口返回的错误信息
+        return Promise.reject(error.response.data);
+    });
 
 
 // 注入ajax
@@ -90,6 +90,6 @@ Vue.prototype.$axios = axios;
 Vue.config.productionTip = false;
 
 new Vue({
-  router,
-  render: h => h(RouterVue),
+    router,
+    render: h => h(RouterVue),
 }).$mount('#app');

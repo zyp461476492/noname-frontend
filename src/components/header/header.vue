@@ -10,17 +10,17 @@
       </el-col>
       <el-col :span="8">
         <el-row type="flex" justify="end">
-          <el-dropdown>
+            <el-dropdown @command="handleCommand">
             <div>
               <el-row type="flex" justify="center">
                 <p class="avatar-text">张三丰</p>
-                <img src="@/components/header/logo.jpg" class="avatar" alt="头像">
+                  <img alt="头像" class="avatar" src="../../components/header/logo.jpg">
               </el-row>
             </div>
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item>个人信息</el-dropdown-item>
-              <el-dropdown-item>系统设置</el-dropdown-item>
-              <el-dropdown-item>注销登录</el-dropdown-item>
+                <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item command="info">个人信息</el-dropdown-item>
+                    <el-dropdown-item command="system">系统设置</el-dropdown-item>
+                    <el-dropdown-item command="exit">注销登录</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </el-row>
@@ -29,7 +29,17 @@
   </div>
 </template>
 <script>
-export default {};
+    export default {
+        methods: {
+            handleCommand(command) {
+                if (command === 'exit') {
+                    this.$message.warning('注销登录');
+                    localStorage.removeItem('JWT_TOKEN');
+                    this.$router.push({path: '/'});
+                }
+            }
+        }
+    };
 </script>
 
 <style scoped>

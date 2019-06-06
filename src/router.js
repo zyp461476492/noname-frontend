@@ -6,33 +6,41 @@ import UserConfig from './views/sys/user/userList.vue';
 import TreeConfig from './views/sys/org/orgList.vue';
 import MenuConfig from './views/sys/menu/menuView.vue';
 import RoleConfig from './views/sys/role/roleList.vue';
+
 Vue.use(Router);
 
 export default new Router({
-  routes: [{
-    name: "App",
-    path: "/main",
-    component: App,
-    children: [{
-        path: 'userConfig',
-        component: UserConfig
-      },
-      {
-        path: 'roleConfig',
-        component: RoleConfig
-      },
-      {
-        path: 'treeConfig',
-        component: TreeConfig
-      },
-      {
-        path: 'menuConfig',
-        component: MenuConfig
-      }
+    routes: [
+        {
+            name: "App",
+            path: "/main",
+            component: App,
+            children: [{
+                path: 'userConfig',
+                component: UserConfig
+            },
+                {
+                    path: 'roleConfig',
+                    component: RoleConfig
+                },
+                {
+                    path: 'treeConfig',
+                    component: TreeConfig
+                },
+                {
+                    path: 'menuConfig',
+                    component: MenuConfig
+                }
+            ]
+        },
+        {
+            name: "Login",
+            path: '/login',
+            component: Login
+        },
+        {
+            path: '/',
+            redirect: {name: 'Login'}
+        }
     ]
-  }, {
-    name: "Login",
-    path: '/login',
-    component: Login
-  }]
 });
