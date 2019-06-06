@@ -61,17 +61,18 @@ export function now() {
 export function buildMenuTree(menuList) {
     // 将节点转换为树形结构
     let tree = {};
+  
     // 初始设置 children 节点
     for (let i = 0; i < menuList.length; i++) {
         let item = menuList[i];
         item.children = [];
         tree[item.id] = item;
         if (item.parent !== undefined) {
+            item.parent.children = [];
             tree[item.parent.id] = item.parent;
         }
     }
-    console.log("tree1:");
-    console.log(tree);
+
     // 拼装树形数据
     for (let i = 0; i < menuList.length; i++) {
         let obj = menuList[i];
@@ -82,8 +83,6 @@ export function buildMenuTree(menuList) {
     }
     // 从节点中取出数据
     let root = [];
-    console.log("tree2:");
-    console.log(tree);
     for (let key in tree) {
         if (tree.hasOwnProperty(key)) {
             let data = tree[key];
@@ -92,7 +91,5 @@ export function buildMenuTree(menuList) {
             }
         }
     }
-    console.log("root:");
-    console.log(root);
     return root;
 }
