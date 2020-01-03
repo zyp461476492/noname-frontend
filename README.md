@@ -1,34 +1,14 @@
-# noname-frontend
+# vue+elementui 练手项目
 
-## Project setup
-```
-npm install
-```
+## 概述
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+学习 vue 基本使用方法和 elementui 使用方法的练手项目
 
-### Compiles and minifies for production
-```
-npm run build
-```
+实现了如下的功能
 
-### Run your tests
-```
-npm run test
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
-
-### check default webpack config
-```
-vue inspect > output.js
-```
+- 用户登录
+- 用户管理
+- 组织机构管理
+- 角色管理
+- 树形菜单设计
+- 角色权限关联
